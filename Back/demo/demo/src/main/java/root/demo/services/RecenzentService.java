@@ -37,27 +37,32 @@ public class RecenzentService implements JavaDelegate{
 	    }
 	    
 	    Korisnik k = korisnikRepository.findOneByUsername(usernameValue);
+	    System.out.println("Korisnik je: " + k.getIme());
 	    
 	    String stringOdobrioGaJe = "" ;
 	    
 	    for (FormSubmissionDto formField : recOdobren) {
 	    	
 			if(formField.getFieldId().equals("potvrdaRecenzenta")) { // ovo je polje sa forme
-				
-				if (formField.getFieldValue() == "true")
+				System.out.println("Nasao sam polje, vrednost polja je: " + formField.getFieldValue());
+				if (formField.getFieldValue().equals("true"))
 				{
+					System.out.println("Odobrio sam ga!");
 					k.setOdobrenRecenzent(true);
+					k.setTip("RECENZENT");
+				    execution.setVariable("odobrenRecenzentKod", "odobrenRecenzent");
+
 				}
 				else
 				{
 					k.setOdobrenRecenzent(false);
+					k.setTip("OBICAN");
 				}
 							
 			}
 	    }
 	    
 	    korisnikRepository.save(k);
-	    execution.setVariable("odobrenRecenzentKod", "odobrenRecenzent");
 		
 	}
 

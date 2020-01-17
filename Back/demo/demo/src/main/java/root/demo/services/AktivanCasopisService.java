@@ -49,13 +49,16 @@ public class AktivanCasopisService implements JavaDelegate{
 	    	
 			if(formField.getFieldId().equals("proveraUspesna")) { // ovo je polje sa forme
 				
-				if (formField.getFieldValue() == "true")
+				if (formField.getFieldValue().equals("true"))
 				{
 					casopis.setAktivan(true);
+					System.out.println("Aktivan!");
 				}
 				else
 				{
 					casopis.setAktivan(true);
+					System.out.println("Nektivan!");
+
 				}
 							
 			}
