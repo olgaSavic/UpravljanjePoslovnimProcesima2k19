@@ -16,6 +16,7 @@ import {UredniciRecenzentiComponent} from './urednici-recenzenti/urednici-recenz
 import {LoginAdminCasopisComponent} from './login-admin-casopis/login-admin-casopis.component';
 import {AktivacijaCasopisAdminComponent} from './aktivacija-casopis-admin/aktivacija-casopis-admin.component';
 import {FinishPageCasopisComponent} from './finish-page-casopis/finish-page-casopis.component';
+import {AZapocniObraduComponent} from './a-zapocni-obradu/a-zapocni-obradu.component';
 
 const routes: Routes = [
 
@@ -34,11 +35,11 @@ const routes: Routes = [
   { path: 'uredRec/:processInstanceId', component: UredniciRecenzentiComponent },
   { path: 'loginAdminCasopis/:processInstanceId', component: LoginAdminCasopisComponent },
   { path: 'aktivacijaCasAdmin/:processInstanceId', component: AktivacijaCasopisAdminComponent },
-  { path: 'finishPageCasopis', component: FinishPageCasopisComponent }
+  { path: 'finishPageCasopis', component: FinishPageCasopisComponent },
 
-
-
-
+  // KT 4 = ODBRANA
+  { path: 'zapocniObradu', component: AZapocniObraduComponent }
+  
 
 ];
 

@@ -34,6 +34,8 @@ import { UredniciRecenzentiComponent } from './urednici-recenzenti/urednici-rece
 import { LoginAdminCasopisComponent } from './login-admin-casopis/login-admin-casopis.component';
 import { AktivacijaCasopisAdminComponent } from './aktivacija-casopis-admin/aktivacija-casopis-admin.component';
 import { FinishPageCasopisComponent } from './finish-page-casopis/finish-page-casopis.component';
+import { AZapocniObraduComponent } from './a-zapocni-obradu/a-zapocni-obradu.component';
+import {ObradaService} from './services/obrada/obrada.service';
 
 const ChildRoutes =
   [
@@ -74,6 +76,7 @@ const Routes = [
     LoginAdminCasopisComponent,
     AktivacijaCasopisAdminComponent,
     FinishPageCasopisComponent,
+    AZapocniObraduComponent,
   ],
   imports: [
     BrowserModule,
@@ -89,7 +92,8 @@ const Routes = [
     Admin,
     Authorized,
     Notauthorized,
-    NaucnaOblastService
+    NaucnaOblastService,
+    ObradaService
     ],
   bootstrap: [AppComponent]
 })

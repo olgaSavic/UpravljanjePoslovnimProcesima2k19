@@ -46,7 +46,6 @@ public class ValidacijaLoginService implements JavaDelegate{
 	public boolean proslaValidacija(List<FormSubmissionDto> login)
 	{
 		
-		// MORAM UBACITI PROVERU AKO GA JE JEDNOM PREBACIO NA FALSE DA IDE NA BREAK, JER JE DOVOLJNO DA JEDNO POLJE BUDE NEISPRAVNO
 		boolean rezultatValidacije = true ;
 		
 		for (FormSubmissionDto formField : login) {
