@@ -28,6 +28,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,8 +45,8 @@ import root.demo.services.TestService;
 import root.demo.services.ValidacijaLoginService;
 import root.demo.services.ValidacijaService;
 
-@Controller
-@RequestMapping("/korisnik")
+@RestController
+@RequestMapping(value = "korisnik")
 public class KorisnikController {
 	
 	@Autowired
@@ -206,6 +207,27 @@ public class KorisnikController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
+	}
+	
+	// SPRING SECURITY - VRATI TRENUTNOG KORISNIKA
+	@RequestMapping(value="/trenutniKorisnik",method = RequestMethod.GET)
+	public Korisnik getCurrentUser() {
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		System.out.println("Principal.toString() je: " + principal.toString());
+		Korisnik k = korisnikRepository.findOneByUsername(principal.toString());
+		if (k != null) 
+		{
+			String kIme = k.getUsername();
+			System.out.println("Username getCurrentUser je: " + kIme);
+		}
+		else 
+		{
+			System.out.println("Korisnik je null!");
+		}
+		
+		
+		return k;
 	}
 	
 	

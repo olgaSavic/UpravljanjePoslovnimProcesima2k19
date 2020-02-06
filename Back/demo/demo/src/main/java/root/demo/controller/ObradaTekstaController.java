@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -68,21 +69,7 @@ public class ObradaTekstaController
 	CasopisRepository casopisRepository ;
 	
 	@Autowired
-	KorisnikRepository korisnikRepository ;
-	
-	public Korisnik trenutniKorisnik(@Context HttpServletRequest request)
-	{
-		Korisnik k = (Korisnik) request.getSession().getAttribute("logged");
-		Korisnik k1 = korisnikRepository.findOneById(k.getId());
-		
-		System.out.println("Id korisnika je: " + k.getId());
-		
-		if(k1 != null) {
-			return k1 ;
-		} else {
-			return null ;
-		}
-	}
+	KorisnikRepository korisnikRepository ;	
 	
 	// klik na zapocni proces koje stoji gore
 	@GetMapping(path = "/startObradaProcess", produces = "application/json")
@@ -91,24 +78,6 @@ public class ObradaTekstaController
 		System.out.println("USAO");
 		//startujemo proces sa id 
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("obrada_teksta_proces");
-		
-		
-        Korisnik k = trenutniKorisnik(request);
-        String username = k.getUsername();
-        
-        System.out.println("Username korisnika je: " + username);
-        
-        /*
-        if (k != null) // neko je ulogovan
-        {
-        	runtimeService.setVariable(pi.getId(), "rezUlogovan" , true);
-        }
-        else
-        {
-        	runtimeService.setVariable(pi.getId(), "rezUlogovan" , false);
-        }
-        
-        */
                 
 		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).list().get(0);
 		
@@ -343,6 +312,8 @@ public class ObradaTekstaController
 			return new ResponseEntity<>(HttpStatus.OK);
 	    }
 
+		
+				
 	
 	
 	 

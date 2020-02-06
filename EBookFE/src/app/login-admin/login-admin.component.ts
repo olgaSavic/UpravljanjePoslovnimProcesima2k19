@@ -3,6 +3,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Korisnik} from '../model/Korisnik';
 import {ActivatedRoute, Router} from '@angular/router';
 import {KorisnikService} from '../services/korisnik/korisnik.service';
+import {KorisnikModel} from '../model/Korisnik.model';
+import {AuthService} from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-login-admin',
@@ -17,12 +19,13 @@ export class LoginAdminComponent implements OnInit {
       Validators.maxLength(50)]] });
 
   loginError = '';
-  sendUser: Korisnik = new Korisnik();
+  sendUser: KorisnikModel = new KorisnikModel();
   idThis: any ;
   private processInstance = "";
 
   constructor(private route: ActivatedRoute,
               protected router: Router,
+              private authService: AuthService,
               private formBuilder: FormBuilder, private userService: KorisnikService) {
 
     const processInstanceId = this.route.snapshot.params.processInstanceId ;
@@ -40,20 +43,29 @@ export class LoginAdminComponent implements OnInit {
     this.sendUser.username = username;
     this.sendUser.password = password;
 
-    let x = this.userService.loginAdmin(this.sendUser);
+    let x = this.authService.login(this.sendUser);
     x.subscribe(
-      res => {
-        console.log(res);
-        alert('Uspesno ste se ulogovali!');
-        sessionStorage.setItem('loggedUser', JSON.stringify(res));
-        this.router.navigateByUrl('recAdmin/' + this.processInstance);
-      },
-      err => {
-        alert('Uneli ste neispravno korisnicko ime ili lozinku, ili nemate dozvolu da se logujete preko ove forme!');
-        location.reload();
+      success => {
+
+        if (!success) {
+          alert('Neispravno korisnicko ime ili lozinka!');
+
+        } else {
+          this.authService.getCurrentUser().subscribe(
+            data => {
+
+              localStorage.setItem("ROLE", data.tip);
+              localStorage.setItem("USERNAME", data.username);
+              this.router.navigateByUrl('recAdmin/' + this.processInstance);
+
+            }
+          )
+        }
       }
     );
+
   }
+
 
 
 }

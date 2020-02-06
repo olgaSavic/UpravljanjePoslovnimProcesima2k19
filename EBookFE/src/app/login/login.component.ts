@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators, FormBuilder, NgForm, AbstractControl} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {KorisnikService} from '../services/korisnik/korisnik.service';
-import {Korisnik} from '../model/Korisnik';
+import {KorisnikModel} from '../model/Korisnik.model';
+import {AuthService} from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -17,11 +18,12 @@ export class LoginComponent implements OnInit {
       Validators.maxLength(50)]] });
 
   loginError = '';
-  sendUser: Korisnik = new Korisnik();
+  sendUser: KorisnikModel = new KorisnikModel();
 
   constructor(private route: ActivatedRoute,
               protected router: Router,
-              private formBuilder: FormBuilder, private userService: KorisnikService) { }
+              private formBuilder: FormBuilder, private userService: KorisnikService,
+              private authService: AuthService) { }
 
   ngOnInit() {
   }
@@ -34,19 +36,37 @@ export class LoginComponent implements OnInit {
     this.sendUser.username = username;
     this.sendUser.password = password;
 
-    let x = this.userService.loginUser(this.sendUser);
+    let x = this.authService.login(this.sendUser);
     x.subscribe(
-      res => {
-        console.log(res);
-        alert('Uspesno ste se ulogovali!');
-        sessionStorage.setItem('loggedUser', JSON.stringify(res));
-        this.router.navigateByUrl('kreiranjeCasopisa');
-      },
-      err => {
-        alert('Uneli ste neispravno korisnicko ime ili lozinku, ili nemate dozvolu da se logujete preko ove forme!');
-        location.reload();
+      success => {
+
+        if (!success) {
+          alert('Neispravno korisnicko ime ili lozinka!');
+          location.reload();
+
+        } else {
+          this.authService.getCurrentUser().subscribe(
+            data => {
+              alert('Uspesno ste se ulogovali!');
+              localStorage.setItem("ROLE", data.tip);
+              localStorage.setItem("USERNAME", data.username);
+
+              // dodati pitanje u zavisnosti od kog ce se prelaziti na kreiranje casopisa ili na dodavanje novog teksta
+              if (data.tip == "UREDNIK") {
+                this.router.navigateByUrl('kreiranjeCasopisa');
+              }
+              else
+              {
+                this.router.navigateByUrl('');
+              }
+
+
+            }
+          )
+        }
       }
     );
+
   }
 
   registrujSe()

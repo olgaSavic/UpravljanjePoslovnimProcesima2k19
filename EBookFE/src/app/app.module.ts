@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { RouterModule, Routes } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
@@ -40,6 +40,9 @@ import { ALoginObradaComponent } from './a-login-obrada/a-login-obrada.component
 import { AIzborCasopisaComponent } from './a-izbor-casopisa/a-izbor-casopisa.component';
 import { AUnosInfoRadComponent } from './a-unos-info-rad/a-unos-info-rad.component';
 import { KrajLoginComponent } from './kraj-login/kraj-login.component';
+import {AuthService} from './services/auth/auth.service';
+import {AuthInterceptor} from './auth-interceptor/auth-interceptor';
+
 
 const ChildRoutes =
   [
@@ -101,7 +104,9 @@ const Routes = [
     Authorized,
     Notauthorized,
     NaucnaOblastService,
-    ObradaService
+    ObradaService,
+    AuthService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
     ],
   bootstrap: [AppComponent]
 })

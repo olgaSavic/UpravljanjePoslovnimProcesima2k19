@@ -3,6 +3,8 @@ import {FormControl, FormGroup, Validators, FormBuilder, NgForm, AbstractControl
 import {ActivatedRoute, Router} from '@angular/router';
 import {KorisnikService} from '../services/korisnik/korisnik.service';
 import {Korisnik} from '../model/Korisnik';
+import {KorisnikModel} from '../model/Korisnik.model';
+import {AuthService} from '../services/auth/auth.service';
 @Component({
   selector: 'app-a-login-obrada',
   templateUrl: './a-login-obrada.component.html',
@@ -16,19 +18,57 @@ export class ALoginObradaComponent implements OnInit {
       Validators.maxLength(50)]] });
 
   loginError = '';
-  sendUser: Korisnik = new Korisnik();
+  sendUser: KorisnikModel = new KorisnikModel();
 
   private processInstance: any ;
 
   constructor(private route: ActivatedRoute,
               protected router: Router,
+              private authService: AuthService,
               private formBuilder: FormBuilder, private userService: KorisnikService) { }
 
   ngOnInit() {
   }
 
-
   login(submittedForm: FormGroup) {
+
+    const processInstanceId = this.route.snapshot.params.processInstanceId ;
+    this.processInstance = processInstanceId;
+    
+    const username = submittedForm.get('username').value;
+    const password = submittedForm.get('password').value;
+
+    this.sendUser.username = username;
+    this.sendUser.password = password;
+
+    let x = this.authService.login(this.sendUser);
+    x.subscribe(
+      success => {
+
+        if (!success) {
+          alert('Neispravno korisnicko ime ili lozinka!');
+          location.reload();
+
+        } else {
+          this.authService.getCurrentUser().subscribe(
+            data => {
+              alert('Uspesno ste se ulogovali!');
+              localStorage.setItem("ROLE", data.tip);
+              localStorage.setItem("USERNAME", data.username);
+
+              this.router.navigateByUrl('izborCasopisa/' + this.processInstance);
+
+            }
+          )
+        }
+      }
+    );
+
+  }
+
+
+
+  login2(submittedForm: FormGroup) {
 
     const processInstanceId = this.route.snapshot.params.processInstanceId ;
     this.processInstance = processInstanceId;
