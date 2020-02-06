@@ -80,11 +80,11 @@ export class RecencentAdminComponent implements OnInit {
 
         if (this.dalje == true)
         {
-          this.router.navigateByUrl('finishPageRecenzent');
+          this.router.navigateByUrl('finishPageRecenzent/' + this.processInstance);
         }
         else
         {
-          this.router.navigateByUrl('finishPage');
+          this.router.navigateByUrl('finishPage/' + this.processInstance);
         }
 
 

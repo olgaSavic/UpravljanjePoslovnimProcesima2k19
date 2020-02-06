@@ -36,6 +36,10 @@ import { AktivacijaCasopisAdminComponent } from './aktivacija-casopis-admin/akti
 import { FinishPageCasopisComponent } from './finish-page-casopis/finish-page-casopis.component';
 import { AZapocniObraduComponent } from './a-zapocni-obradu/a-zapocni-obradu.component';
 import {ObradaService} from './services/obrada/obrada.service';
+import { ALoginObradaComponent } from './a-login-obrada/a-login-obrada.component';
+import { AIzborCasopisaComponent } from './a-izbor-casopisa/a-izbor-casopisa.component';
+import { AUnosInfoRadComponent } from './a-unos-info-rad/a-unos-info-rad.component';
+import { KrajLoginComponent } from './kraj-login/kraj-login.component';
 
 const ChildRoutes =
   [
@@ -77,6 +81,10 @@ const Routes = [
     AktivacijaCasopisAdminComponent,
     FinishPageCasopisComponent,
     AZapocniObraduComponent,
+    ALoginObradaComponent,
+    AIzborCasopisaComponent,
+    AUnosInfoRadComponent,
+    KrajLoginComponent,
   ],
   imports: [
     BrowserModule,

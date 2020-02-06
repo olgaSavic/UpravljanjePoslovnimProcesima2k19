@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import {ObradaService} from '../services/obrada/obrada.service';
+import {UserService} from '../services/users/user.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {RepositoryService} from '../services/repository/repository.service';
+import {NaucnaOblastService} from '../services/naucna-oblast/naucna-oblast.service';
+import {KorisnikService} from '../services/korisnik/korisnik.service';
 
 @Component({
   selector: 'app-a-zapocni-obradu',
@@ -15,7 +20,15 @@ export class AZapocniObraduComponent implements OnInit {
   private enumValues = [];
   private tasks = [];
 
-  constructor(private obradaService: ObradaService) {
+  private dalje: any ;
+
+  constructor(private userService : UserService,
+              private route: ActivatedRoute,
+              protected  router: Router,
+              private repositoryService : RepositoryService,
+              private naucnaOService: NaucnaOblastService,
+              private korisnikService: KorisnikService,
+              private obradaService: ObradaService) {
 
     let x = obradaService.startObradaProcess();
     x.subscribe(
@@ -33,11 +46,51 @@ export class AZapocniObraduComponent implements OnInit {
           }
         });
       });
+
   }
 
   ngOnInit() {
-
-
   }
+
+  onSubmit(value, form)
+  {
+    let o = new Array();
+    for (var property in value) {
+      console.log(property);
+      console.log(value[property]);
+      o.push({fieldId : property, fieldValue : value[property]});
+
+      if (property == 'zelimReg')
+      {
+        this.dalje = value[property];
+      }
+    }
+
+    console.log(o);
+    let x = this.obradaService.nastaviDaljeReg(o, this.formFieldsDto.taskId);
+
+    x.subscribe(
+      res => {
+        console.log(res);
+
+
+
+        if (this.dalje == true)
+        {
+          this.router.navigateByUrl('registrate');
+        }
+        else
+        {
+          //this.router.navigateByUrl('izborCasopisa/' + this.processInstance);
+          this.router.navigateByUrl('loginObrada/' + this.processInstance);
+        }
+
+      },
+      err => {
+        console.log("Doslo je do greske, pa nije moguc nastavak!");
+      }
+    );
+  }
+
 
 }

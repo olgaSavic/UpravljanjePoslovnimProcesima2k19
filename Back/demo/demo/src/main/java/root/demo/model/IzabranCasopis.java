@@ -1,6 +1,5 @@
 package root.demo.model;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,16 +13,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
 @JsonIdentityInfo(generator= ObjectIdGenerators.PropertyGenerator.class, property="id")
-public class Casopis {
+public class IzabranCasopis {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -61,28 +58,19 @@ public class Casopis {
 	@ManyToMany(cascade = {CascadeType.ALL})
 	@JoinTable(
 	        name = "Casopis_Urednik", 
-	        joinColumns = { @JoinColumn(name = "casopis_id") }, 
+	        joinColumns = { @JoinColumn(name = "magazine_id") }, 
 	        inverseJoinColumns = { @JoinColumn(name = "korisnik_id") }
 	  )
-	private Set<Korisnik> uredniciCasopis = new HashSet<Korisnik>();
 	
 	// glavni urednik casopisa
-	@ManyToOne(fetch = FetchType.EAGER)
-	private Korisnik glavniUrednik;
-	
-	@Column(name = "izabran")
-	private boolean izabranCasopis ;
-	
-	
+	private Set<Korisnik> uredniciCasopis = new HashSet<Korisnik>();
 
-	
-	
-	public Casopis() {
+	public IzabranCasopis() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Casopis(Long id, String naziv, String issn, boolean openAccess, boolean aktivan,
+	public IzabranCasopis(Long id, String naziv, String issn, boolean openAccess, boolean aktivan,
 			Set<NaucnaOblastCasopis> naucneOblasti, Set<Korisnik> recenzentiCasopis, Set<Korisnik> uredniciCasopis,
 			Korisnik glavniUrednik) {
 		super();
@@ -96,15 +84,6 @@ public class Casopis {
 		this.uredniciCasopis = uredniciCasopis;
 	}
 
-	public boolean isIzabranCasopis() {
-		return izabranCasopis;
-	}
-
-	public void setIzabranCasopis(boolean izabranCasopis) {
-		this.izabranCasopis = izabranCasopis;
-	}
-
-	
 	public Long getId() {
 		return id;
 	}
@@ -168,17 +147,6 @@ public class Casopis {
 	public void setUredniciCasopis(Set<Korisnik> uredniciCasopis) {
 		this.uredniciCasopis = uredniciCasopis;
 	}
-
-	public Korisnik getGlavniUrednik() {
-		return glavniUrednik;
-	}
-
-	public void setGlavniUrednik(Korisnik glavniUrednik) {
-		this.glavniUrednik = glavniUrednik;
-	}
-	
-	
-
 
 
 }

@@ -12,3 +12,11 @@ insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava
 	values (6, "Dragan", "Borkovac", "borkovac1996",  "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1", "borkovac@rec.com", "Srbija", "Novi Sad", "student", false, true, "RECENZENT", false);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
 	values (7, "Nikola", "Mandic", "manda1996",  "d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1", "manda@rec.com", "Srbija", "Novi Sad", "student", false, true, "RECENZENT", false);
+
+	
+insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
+	values(100, "Nacionalna Geografija", "100", true, true, false);
+insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
+	values(200, "Politikin zabavnik", "200", true, true, false);
+insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
+	values(300, "Oko", "300", true, true, false);	

@@ -71,7 +71,7 @@ export class AfterEmailComponent implements OnInit {
 
     },
       err => {
-        this.router.navigateByUrl('/finishPage');
+        this.router.navigateByUrl('/finishPage/' + this.processInstance);
       }
       )
 

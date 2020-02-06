@@ -90,14 +90,7 @@ public class KorisnikController {
    	        System.out.println("Nije aktiviran");
 			return new ResponseEntity<Korisnik>(HttpStatus.BAD_REQUEST);
 
-	   } 
-	   
-	   if (!loginUser.getTip().equals("UREDNIK"))
-	   {
-		   System.out.println("Korisnik nije urednik, pa ne moze da se uloguje preko ove forme!");
-			return new ResponseEntity<Korisnik>(HttpStatus.BAD_REQUEST);
-	   }
-	    
+	   }  
 	   
 	   // hesovanje lozinke i provera
 	   	try {
@@ -113,14 +106,6 @@ public class KorisnikController {
 			return new ResponseEntity<Korisnik>(HttpStatus.BAD_REQUEST);
 
 		}
-		
-	   /*
-	   if(!loginUser.getPassword().equals(password)) {
-			//moraju se poklapati unesena lozinka i lozinka od korisnika sa unetim mailom 
-			System.out.println("Ne poklapaju se sifre");
-			return new ResponseEntity<Korisnik>(HttpStatus.BAD_REQUEST);
-	   }
-	   */
 	   
 		request.getSession().setAttribute("logged", loginUser);
 
@@ -223,19 +208,7 @@ public class KorisnikController {
 		
 	}
 	
-	/*
-	 * @RequestMapping(value="/trenutniKorisnik",method = RequestMethod.GET)
-	public ResponseEntity<KorisnikDTO> trenutniKorisnik(@Context HttpServletRequest request){
-		Korisnik k = (Korisnik) request.getSession().getAttribute("ulogovan");
-		Korisnik k1 = servis.vratiKorisnikaPoId(k.getId());
-		KorisnikDTO kd = new KorisnikDTO(k1);
-		if(k1 != null) {
-			return new ResponseEntity<>(kd, HttpStatus.OK);
-		} else {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-	}
-	 */
+	
 	
 	
 	

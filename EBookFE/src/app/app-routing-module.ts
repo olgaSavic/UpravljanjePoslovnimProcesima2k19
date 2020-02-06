@@ -17,12 +17,15 @@ import {LoginAdminCasopisComponent} from './login-admin-casopis/login-admin-caso
 import {AktivacijaCasopisAdminComponent} from './aktivacija-casopis-admin/aktivacija-casopis-admin.component';
 import {FinishPageCasopisComponent} from './finish-page-casopis/finish-page-casopis.component';
 import {AZapocniObraduComponent} from './a-zapocni-obradu/a-zapocni-obradu.component';
+import {ALoginObradaComponent} from './a-login-obrada/a-login-obrada.component';
+import {AIzborCasopisaComponent} from './a-izbor-casopisa/a-izbor-casopisa.component';
+import {AUnosInfoRadComponent} from './a-unos-info-rad/a-unos-info-rad.component';
 
 const routes: Routes = [
 
   { path: 'naucnaOblast/:processInstanceId', component: NaucnaOblastComponent },
-  { path: 'finishPage', component: FinishPageComponent },
-  { path: 'finishPageRecenzent', component: FinishPageRecenzentComponent },
+  { path: 'finishPage/:processInstanceId', component: FinishPageComponent },
+  { path: 'finishPageRecenzent/:processInstanceId', component: FinishPageRecenzentComponent },
   { path: 'login', component: LoginComponent },
   { path: 'loginAdmin/:processInstanceId', component: LoginAdminComponent },
   { path: 'email/:processInstanceId', component: EmailComponent },
@@ -38,7 +41,10 @@ const routes: Routes = [
   { path: 'finishPageCasopis', component: FinishPageCasopisComponent },
 
   // KT 4 = ODBRANA
-  { path: 'zapocniObradu', component: AZapocniObraduComponent }
+  { path: 'zapocniObradu', component: AZapocniObraduComponent },
+  { path: 'loginObrada/:processInstanceId', component: ALoginObradaComponent },
+  { path: 'izborCasopisa/:processInstanceId', component: AIzborCasopisaComponent },
+  { path: 'unosInfoRad/:processInstanceId', component: AUnosInfoRadComponent }
   
 
 ];
