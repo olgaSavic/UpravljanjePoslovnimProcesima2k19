@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import {UserService} from '../services/users/user.service';
+import {ActivatedRoute, Router} from '@angular/router';
+import {RepositoryService} from '../services/repository/repository.service';
+import {ObradaService} from '../services/obrada/obrada.service';
 
 @Component({
   selector: 'app-a-unos-koautora',
@@ -7,9 +11,79 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AUnosKoautoraComponent implements OnInit {
 
-  constructor() { }
+  private repeated_password = "";
+  private categories = [];
+  private formFieldsDto = null;
+  private formFields = [];
+  private choosen_category = -1;
+  private processInstance = "";
+  private enumValues = [];
+  private tasks = [];
+
+  private naucneOblasti = [];
+
+  constructor(private userService : UserService,
+              private route: ActivatedRoute,
+              protected  router: Router,
+              private repositoryService : RepositoryService,
+              private obradaService: ObradaService) {
+
+    const processInstanceId = this.route.snapshot.params.processInstanceId ;
+    this.processInstance = processInstanceId;
+
+    let x = obradaService.sledeciTaskKoautor(processInstanceId);
+
+    x.subscribe(
+      res => {
+        console.log(res);
+        //this.categories = res;
+        this.formFieldsDto = res;
+        this.formFields = res.formFields;
+        console.log(this.formFields);
+
+        this.formFields.forEach( (field) =>{
+
+          if( field.type.name=='enum'){
+            this.enumValues = Object.keys(field.type.values);
+          }
+        });
+      },
+      err => {
+        console.log("Error occured");
+      }
+    );
+  }
 
   ngOnInit() {
   }
+
+  onSubmit(value, form){
+
+    let o = new Array();
+
+    for (var property in value) {
+      console.log(property);
+      console.log(value[property]);
+      o.push({fieldId : property, fieldValue : value[property]});
+    }
+
+
+    console.log(o);
+    let x = this.obradaService.sacuvajKoautore(o, this.formFieldsDto.taskId);
+
+    x.subscribe(
+      res => {
+        console.log(res)
+
+        alert("Uspesno ste uneli koautore u rad!");
+        this.router.navigateByUrl('loginObrada/' + this.processInstance);
+
+      },
+      err => {
+        console.log("Doslo je do greske, pa koautor nije dodat u rad!");
+      }
+    );
+  }
+
 
 }

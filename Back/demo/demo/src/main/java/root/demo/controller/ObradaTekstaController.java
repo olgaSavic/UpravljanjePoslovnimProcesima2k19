@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import root.demo.model.Casopis;
 import root.demo.model.FormFieldsDto;
-import root.demo.model.FormSubmissionDto;
+
 import root.demo.model.FormSubmissonDTO;
 import root.demo.model.Korisnik;
 import root.demo.model.NaucnaOblastCasopis;
@@ -43,6 +43,10 @@ import root.demo.repository.CasopisRepository;
 import root.demo.repository.KorisnikRepository;
 import root.demo.repository.NaucnaOblastCasopisRepository;
 import root.demo.services.ValidacijaService;
+
+import java.io.*;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 @Controller
 @RequestMapping("/obrada")
@@ -317,6 +321,70 @@ public class ObradaTekstaController
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
     }
+	
+	/*
+	@SuppressWarnings("restriction")
+	@PostMapping("/form/{taskId}")
+	public ResponseEntity<String> postFormFileds(@PathVariable("taskId") String taskId, @RequestBody FormDTO formDTO) throws IOException{
+
+		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+		TaskFormData tfd = formService.getTaskFormData(taskId);
+		List<FormField> formFields = tfd.getFormFields();
+		
+		//provjera ispravnosti polja
+		for (FormField field : formFields) {
+			FormFieldDTO fieldDTO = formDTO.getFieldById(field.getId());
+			
+			//validacija po constraintovima
+			List<FormFieldValidationConstraint> constraints = field.getValidationConstraints();
+			for (FormFieldValidationConstraint constraint : constraints) {
+				if(constraint.getName().equals("required")) {
+					if(fieldDTO.getValue() == null || fieldDTO.getValue().equals("")) {
+						return new ResponseEntity<>(fieldDTO.getLabel() + " field is mandatory!",HttpStatus.BAD_REQUEST);
+					}
+				}
+			}
+			
+			//validacija po tipu
+			if(fieldDTO.getType().equals("long")){
+				try {
+					Long.parseLong(fieldDTO.getValue());
+				} catch (Exception e) {
+					// TODO: handle exception
+					return new ResponseEntity<>(fieldDTO.getLabel() + " field must be number!",HttpStatus.BAD_REQUEST);
+				}
+			}
+			
+		}
+		
+		//ako su sva polja uredu ubacujem ih u varijable ako je fajl samo ime ubacim
+		for (FormField field : formFields) {
+			FormFieldDTO fieldDTO = formDTO.getFieldById(field.getId());
+			
+			if(fieldDTO.getType().equals("file")) {
+				BASE64Decoder decoder = new BASE64Decoder();
+				byte[] decodedBytes = decoder.decodeBuffer(fieldDTO.getValue());
+
+				File file = new File("pdf/" + fieldDTO.getFileName());;
+				FileOutputStream fop = new FileOutputStream(file);
+
+				fop.write(decodedBytes);
+				fop.flush();
+				fop.close();
+				
+				runtimeService.setVariable(task.getProcessInstanceId(), fieldDTO.getId(), fieldDTO.getFileName());
+			}else {
+				runtimeService.setVariable(task.getProcessInstanceId(), fieldDTO.getId(), fieldDTO.getValue());
+			}
+		}
+		
+		return new ResponseEntity<>("",HttpStatus.OK);
+	}
+	
+	*/
+	
+	
+
 	
 	// KOMENTAR: METODA TREBA DA VRACA NAUCNE OBLASTI SAMO IZABRANOG CASOPISA
 	@RequestMapping(value="/getNOCasopis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	

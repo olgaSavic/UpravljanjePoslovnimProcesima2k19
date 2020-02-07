@@ -1,31 +1,31 @@
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (1, "Olga", "Savic", "olgaSavic",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "admin@admin.com", "Srbija", "Novi Sad", "student", false, true, "ADMIN", false);
+	values (100, "Olga", "Savic", "olgaSavic",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "admin@admin.com", "Srbija", "Novi Sad", "student", false, true, "ADMIN", false);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (2, "Nemanja", "Vujovic", "neca1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "neca@urednik.com", "Srbija", "Novi Sad", "student", false, true, "UREDNIK", false);
+	values (200, "Nemanja", "Vujovic", "neca1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "vujovicnemanja670@gmail.com", "Srbija", "Novi Sad", "student", false, true, "UREDNIK", false);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (3, "Pavle", "Trifkovic", "paki1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "paki@urednik.com", "Srbija", "Novi Sad", "student", false, true, "UREDNIK", false);
+	values (300, "Pavle", "Trifkovic", "paki1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "paki@urednik.com", "Srbija", "Novi Sad", "student", false, true, "UREDNIK", false);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (4, "Nikola", "Pavlovic", "pavlovic1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "pavlovic@urednik.com", "Srbija", "Novi Sad", "student", false, true, "UREDNIK", false);
+	values (400, "Nikola", "Pavlovic", "pavlovic1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "pavlovic@urednik.com", "Srbija", "Novi Sad", "student", false, true, "UREDNIK", false);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (5, "Marina", "Gavric", "maki",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "maki@rec.com", "Srbija", "Novi Sad", "student", true, true, "RECENZENT", true);
+	values (500, "Marina", "Gavric", "maki",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "maki@rec.com", "Srbija", "Novi Sad", "student", true, true, "RECENZENT", true);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (6, "Dragan", "Borkovac", "borkovac1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "borkovac@rec.com", "Srbija", "Novi Sad", "student", true, true, "RECENZENT", true);
+	values (600, "Dragan", "Borkovac", "borkovac1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "borkovac@rec.com", "Srbija", "Novi Sad", "student", true, true, "RECENZENT", true);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (7, "Nikola", "Mandic", "manda1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "manda@rec.com", "Srbija", "Novi Sad", "student", true, true, "RECENZENT", true);
+	values (700, "Nikola", "Mandic", "manda1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "manda@rec.com", "Srbija", "Novi Sad", "student", true, true, "RECENZENT", true);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (8, "Olga", "Savicka", "olga1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "olga@autor.com", "Srbija", "Novi Sad", "student", false, true, "AUTOR", false);
+	values (800, "Olga", "Savicka", "olga1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "lola.savi4@gmail.com", "Srbija", "Novi Sad", "student", false, true, "AUTOR", false);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (9, "Gandri", "Borkovac", "gandri1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "gandri@autor.com", "Srbija", "Novi Sad", "student", false, true, "AUTOR", false);
+	values (900, "Gandri", "Borkovac", "gandri1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "gandri@autor.com", "Srbija", "Novi Sad", "student", false, true, "AUTOR", false);
 insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava, grad, titula, recenzent, aktivan, tip, odobren_recenzent) 
-	values (10, "Petar", "Savic", "tata1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "tata@autor.com", "Srbija", "Novi Sad", "student", false, true, "AUTOR", false);
+	values (1000, "Petar", "Savic", "tata1996",  "$2a$10$bFoT0UWjOFAIQoFRYCIicO2hwNwZy6qhWYq4eXmWqJevf7b2TWpae", "tata@autor.com", "Srbija", "Novi Sad", "student", false, true, "AUTOR", false);
 
 	
-insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
-	values(100, "Nacionalna Geografija", "100", false, true, false);
-insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
-	values(200, "Politikin zabavnik", "200", false, true, false);
-insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
-	values(300, "Oko", "300", false, true, false);	
+insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran, glavni_urednik_id)
+	values(100, "Nacionalna Geografija", "100", false, true, false, 200);
+insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran, glavni_urednik_id)
+	values(200, "Politikin zabavnik", "200", false, true, false, 200);
+insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran, glavni_urednik_id)
+	values(300, "Oko", "300", false, true, false, 200);	
 	
 
 insert into db_upp.naucna_oblast_casopis(id, nazivNO)

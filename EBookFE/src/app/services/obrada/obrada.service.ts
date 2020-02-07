@@ -63,6 +63,15 @@ export class ObradaService {
     return this.httpClient.get('http://localhost:8080/obrada/getNOCasopis') as Observable<any>;
   }
 
+  // ------------------------------------------------
+  sledeciTaskKoautor(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskKoautor/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajKoautore(rad, taskId) {
+    console.log(rad);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajKoautore/'.concat(taskId), rad) as Observable<any>;
+  }
 
 
 

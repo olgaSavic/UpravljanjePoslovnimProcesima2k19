@@ -50,25 +50,28 @@ public class AACuvanjeKoautoraService implements JavaDelegate{
 		Koautor koautor = new Koautor();
 		
 		for (FormSubmissonDTO formField : koautorForm) {
-			
 			if(formField.getFieldId().equals("imeK")) {
 				koautor.setIme(formField.getFieldValue());
+				System.out.println("Ime koautora je: " + koautor.getIme());
 			}
 			if(formField.getFieldId().equals("email")) {
 				koautor.setEmail(formField.getFieldValue());
+				System.out.println("Email koautora je: " + koautor.getEmail());
 			}
 			if(formField.getFieldId().equals("grad")) {
 				koautor.setGrad(formField.getFieldValue());
+				System.out.println("Grad koautora je: " + koautor.getGrad());
 			}
 			if(formField.getFieldId().equals("drzava")) {
 				koautor.setDrzava(formField.getFieldValue());
+				System.out.println("Drzava koautora je: " + koautor.getDrzava());
 			}
 		}
-		
+		koautorRepository.save(koautor);
 		rad.getKoautoriRad().add(koautor);
 		
 		radRepository.save(rad);
-		koautorRepository.save(koautor);
+		
 	
 		
 	}

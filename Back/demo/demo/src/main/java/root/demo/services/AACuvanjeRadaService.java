@@ -46,9 +46,37 @@ public class AACuvanjeRadaService implements JavaDelegate
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
 		List<FormSubmissonDTO> infoRad = (List<FormSubmissonDTO>)execution.getVariable("infoRad");
-	      System.out.println(infoRad);
+		List<FormSubmissonDTO> izabranCasopis = (List<FormSubmissonDTO>)execution.getVariable("izabranCasopis");
+			
+		 Casopis casopis = new Casopis();
+		 
+		 for(FormSubmissonDTO item: izabranCasopis)
+		  {
+			  String fieldId=item.getFieldId();
+			  
+			 if(fieldId.equals("casopisiL")){
+				  
+				  List<Casopis> allCasopisi = casopisRepository.findAll();
+				  for(Casopis c : allCasopisi){
+					  for(String selectedEd:item.getCategories())
+					  {
+						  String idS= c.getId().toString();
+						  
+						  if(idS.equals(selectedEd)){
+							  System.out.println(c.getNaziv());
+							  casopis = casopisRepository.findOneByIssn(c.getIssn());
+							  System.out.println("Naziv izabranog casopisa RAD je: " + casopis.getNaziv());
+							  break ;
+							  
+						  }
+					  }
+				  }
+			 }
+			 
+			}				 
 	      
 	      Rad rad = new Rad();
+	      rad.setCasopis(casopis); // postavim polje rada casopis na izabran casopis
 	      
 	      for (FormSubmissonDTO formField : infoRad) 
 	      {

@@ -50,7 +50,10 @@ public class Rad
 		        inverseJoinColumns = { @JoinColumn(name = "koautor_id") }
 		  )
 		private Set<Koautor> koautoriRad = new HashSet<Koautor>();
-			
+
+		// casopis u kom se rad nalazi
+		@ManyToOne(fetch = FetchType.EAGER)
+		private Casopis casopis;		
 
 	public Rad() {
 		super();
@@ -124,6 +127,16 @@ public class Rad
 	public void setKoautoriRad(Set<Koautor> koautoriRad) {
 		this.koautoriRad = koautoriRad;
 	}
+
+	public Casopis getCasopis() {
+		return casopis;
+	}
+
+	public void setCasopis(Casopis casopis) {
+		this.casopis = casopis;
+	}
+	
+	
 	
 	
 	
