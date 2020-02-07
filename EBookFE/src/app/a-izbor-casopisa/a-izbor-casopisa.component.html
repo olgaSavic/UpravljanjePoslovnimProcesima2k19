@@ -9,8 +9,8 @@
       <div *ngFor="let field of formFields" >
         <label for={{field.id}}>{{field.label}}</label>
         <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum' && field.id=='casopisiL'">
-          <option *ngFor="let casopis of casopisi" value={{casopis.id}}>
-            Olga
+          <option *ngFor="let category of casopisi" value={{category.id}}>
+            {{category.naziv}}
           </option>
         </select>
 

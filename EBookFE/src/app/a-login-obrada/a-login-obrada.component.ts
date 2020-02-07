@@ -34,7 +34,6 @@ export class ALoginObradaComponent implements OnInit {
 
     const processInstanceId = this.route.snapshot.params.processInstanceId ;
     this.processInstance = processInstanceId;
-    
     const username = submittedForm.get('username').value;
     const password = submittedForm.get('password').value;
 
@@ -56,7 +55,7 @@ export class ALoginObradaComponent implements OnInit {
               localStorage.setItem("ROLE", data.tip);
               localStorage.setItem("USERNAME", data.username);
 
-              this.router.navigateByUrl('izborCasopisa/' + this.processInstance);
+              this.router.navigateByUrl('potvrdaNastavak/' + this.processInstance);
 
             }
           )

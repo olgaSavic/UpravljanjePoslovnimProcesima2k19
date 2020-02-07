@@ -21,8 +21,22 @@ insert into db_upp.korisnik (id, ime, prezime, username, password, email, drzava
 
 	
 insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
-	values(100, "Nacionalna Geografija", "100", true, true, false);
+	values(100, "Nacionalna Geografija", "100", false, true, false);
 insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
-	values(200, "Politikin zabavnik", "200", true, true, false);
+	values(200, "Politikin zabavnik", "200", false, true, false);
 insert into db_upp.casopis(id, naziv, issn, open_access, aktivan, izabran)
-	values(300, "Oko", "300", true, true, false);	
+	values(300, "Oko", "300", false, true, false);	
+	
+
+insert into db_upp.naucna_oblast_casopis(id, nazivNO)
+	values(100, "Geografija");
+insert into db_upp.naucna_oblast_casopis(id, nazivNO)
+	values(200, "Istorija");
+insert into db_upp.naucna_oblast_casopis(id, nazivNO)
+	values(300, "Biologija");
+insert into db_upp.naucna_oblast_casopis(id, nazivNO)
+	values(400, "Ekologija");
+insert into db_upp.naucna_oblast_casopis(id, nazivNO)
+	values(500, "Knjizevnost");
+insert into db_upp.naucna_oblast_casopis(id, nazivNO)
+	values(600, "Umetnost");	

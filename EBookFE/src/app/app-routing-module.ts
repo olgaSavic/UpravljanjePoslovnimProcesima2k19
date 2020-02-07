@@ -20,6 +20,8 @@ import {AZapocniObraduComponent} from './a-zapocni-obradu/a-zapocni-obradu.compo
 import {ALoginObradaComponent} from './a-login-obrada/a-login-obrada.component';
 import {AIzborCasopisaComponent} from './a-izbor-casopisa/a-izbor-casopisa.component';
 import {AUnosInfoRadComponent} from './a-unos-info-rad/a-unos-info-rad.component';
+import {AUnosKoautoraComponent} from './a-unos-koautora/a-unos-koautora.component';
+import {APotvrdaNastavakComponent} from './a-potvrda-nastavak/a-potvrda-nastavak.component';
 
 const routes: Routes = [
 
@@ -43,9 +45,13 @@ const routes: Routes = [
   // KT 4 = ODBRANA
   { path: 'zapocniObradu', component: AZapocniObraduComponent },
   { path: 'loginObrada/:processInstanceId', component: ALoginObradaComponent },
+  { path: 'potvrdaNastavak/:processInstanceId', component: APotvrdaNastavakComponent },
   { path: 'izborCasopisa/:processInstanceId', component: AIzborCasopisaComponent },
-  { path: 'unosInfoRad/:processInstanceId', component: AUnosInfoRadComponent }
-  
+  { path: 'unosInfoRad/:processInstanceId', component: AUnosInfoRadComponent },
+  { path: 'unosKoautora/:processInstanceId', component: AUnosKoautoraComponent },
+
+
+
 
 ];
 

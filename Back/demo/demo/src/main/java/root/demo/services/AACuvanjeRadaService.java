@@ -60,7 +60,7 @@ public class AACuvanjeRadaService implements JavaDelegate
 				rad.setKljucniPojmovi(formField.getFieldValue());
 			}
 			
-			if(formField.getFieldId().equals("asptrakt")) {
+			if(formField.getFieldId().equals("apstrakt")) {
 				
 				rad.setApstrakt(formField.getFieldValue());
 				

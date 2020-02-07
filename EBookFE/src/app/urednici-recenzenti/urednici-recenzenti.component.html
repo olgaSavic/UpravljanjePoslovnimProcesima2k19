@@ -8,6 +8,7 @@
     <form #f="ngForm" (ngSubmit)="onSubmit(f.value, f)" ngNativeValidate>
       <div *ngFor="let field of formFields" >
         <label for={{field.id}}>{{field.label}}</label>
+
         <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum' && field.id=='recenzentiL'">
           <option *ngFor="let category of reviewers" value={{category.id}}>
             {{category.ime}}  {{category.prezime}}

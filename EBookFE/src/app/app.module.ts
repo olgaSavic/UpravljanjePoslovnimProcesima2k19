@@ -42,6 +42,8 @@ import { AUnosInfoRadComponent } from './a-unos-info-rad/a-unos-info-rad.compone
 import { KrajLoginComponent } from './kraj-login/kraj-login.component';
 import {AuthService} from './services/auth/auth.service';
 import {AuthInterceptor} from './auth-interceptor/auth-interceptor';
+import { AUnosKoautoraComponent } from './a-unos-koautora/a-unos-koautora.component';
+import { APotvrdaNastavakComponent } from './a-potvrda-nastavak/a-potvrda-nastavak.component';
 
 
 const ChildRoutes =
@@ -88,6 +90,8 @@ const Routes = [
     AIzborCasopisaComponent,
     AUnosInfoRadComponent,
     KrajLoginComponent,
+    AUnosKoautoraComponent,
+    APotvrdaNastavakComponent,
   ],
   imports: [
     BrowserModule,

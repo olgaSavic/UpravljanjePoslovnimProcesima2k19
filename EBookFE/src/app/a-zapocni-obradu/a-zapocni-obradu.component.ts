@@ -5,6 +5,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {RepositoryService} from '../services/repository/repository.service';
 import {NaucnaOblastService} from '../services/naucna-oblast/naucna-oblast.service';
 import {KorisnikService} from '../services/korisnik/korisnik.service';
+import {AuthService} from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-a-zapocni-obradu',
@@ -25,31 +26,48 @@ export class AZapocniObraduComponent implements OnInit {
   constructor(private userService : UserService,
               private route: ActivatedRoute,
               protected  router: Router,
+              private authService: AuthService,
               private repositoryService : RepositoryService,
               private naucnaOService: NaucnaOblastService,
               private korisnikService: KorisnikService,
               private obradaService: ObradaService) {
 
     let x = obradaService.startObradaProcess();
+
+    // kupljenje polja forme
     x.subscribe(
       res => {
+        this.processInstance = res.processInstanceId;
+        this.authService.getCurrentUser().subscribe(
+          data => {
+
+            // neko je ulogovan
+            if (data != null) {
+              this.router.navigateByUrl('izborCasopisa/' + this.processInstance);
+            }
+
+          }
+        )
         console.log(res);
         console.log('Ispis rezultata');
         this.formFieldsDto = res;
         this.formFields = res.formFields;
         console.log(this.formFields);
-
-        this.processInstance = res.processInstanceId;
         this.formFields.forEach((field) => {
           if (field.type.name === 'enum') {
             this.enumValues = Object.keys(field.type.values);
           }
         });
+
+
       });
+
+
 
   }
 
   ngOnInit() {
+
   }
 
   onSubmit(value, form)
@@ -81,7 +99,6 @@ export class AZapocniObraduComponent implements OnInit {
         }
         else
         {
-          //this.router.navigateByUrl('izborCasopisa/' + this.processInstance);
           this.router.navigateByUrl('loginObrada/' + this.processInstance);
         }
 

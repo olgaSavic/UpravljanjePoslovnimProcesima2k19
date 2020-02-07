@@ -44,26 +44,39 @@ public class AACuvanjeIzCasopisService implements JavaDelegate{
 		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
 				 List<FormSubmissonDTO> izabranCasopis = (List<FormSubmissonDTO>)execution.getVariable("izabranCasopis");
-				 String issn="";
-				 
-				 for(FormSubmissonDTO item: izabranCasopis){
-					 if(item.getFieldId().equals("issn")){
-						 issn = item.getFieldValue();
-						 break;
-					 }
-				 }
-				 
-				 // pronalazi casopis na osnovu issn broja
+				
 				 Casopis casopis = new Casopis();
-				 casopis = casopisRepository.findOneByIssn(issn);
-				 
-				 System.out.println("Stanje OPEN-ACCESS je: " + casopis.isOpenAccess());
 				 
 				 // postavim procesnu varijablu na osnovu casopisa, da li je open-access ili nije, zbog if-a
 				 execution.setVariable("openAccessVar", casopis.isOpenAccess());
 				 
 				 // postavljam da je izabran casopis taj koji je korisnik kliknuo 
 				 // u jednom momentu sme biti samo jedan izabran casopis
+				 
+				 for(FormSubmissonDTO item: izabranCasopis)
+				  {
+					  String fieldId=item.getFieldId();
+					  
+					 if(fieldId.equals("casopisiL")){
+						  
+						  List<Casopis> allCasopisi = casopisRepository.findAll();
+						  for(Casopis c : allCasopisi){
+							  for(String selectedEd:item.getCategories())
+							  {
+								  String idS= c.getId().toString();
+								  
+								  if(idS.equals(selectedEd)){
+									  System.out.println(c.getNaziv());
+									  casopis = casopisRepository.findOneByIssn(c.getIssn());
+									  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
+									  break ;
+									  
+								  }
+							  }
+						  }
+					 }
+					 
+					}				 
 				 casopis.setIzabranCasopis(true);
 				 casopisRepository.save(casopis);
 		

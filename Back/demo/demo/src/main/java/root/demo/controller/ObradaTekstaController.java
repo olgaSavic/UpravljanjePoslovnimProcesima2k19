@@ -37,9 +37,11 @@ import root.demo.model.FormFieldsDto;
 import root.demo.model.FormSubmissionDto;
 import root.demo.model.FormSubmissonDTO;
 import root.demo.model.Korisnik;
+import root.demo.model.NaucnaOblastCasopis;
 import root.demo.model.TaskDto;
 import root.demo.repository.CasopisRepository;
 import root.demo.repository.KorisnikRepository;
+import root.demo.repository.NaucnaOblastCasopisRepository;
 import root.demo.services.ValidacijaService;
 
 @Controller
@@ -70,6 +72,9 @@ public class ObradaTekstaController
 	
 	@Autowired
 	KorisnikRepository korisnikRepository ;	
+	
+	@Autowired
+	NaucnaOblastCasopisRepository noRepository ;
 	
 	// klik na zapocni proces koje stoji gore
 	@GetMapping(path = "/startObradaProcess", produces = "application/json")
@@ -118,6 +123,57 @@ public class ObradaTekstaController
 		
 		return map;
 	}
+	
+	// ucitavanje forme gde korisnik bira casopis
+		@GetMapping(path = "/potvrdaNastavak/{processId}", produces = "application/json")
+	    public @ResponseBody FormFieldsDto potvrdaNastavak(@PathVariable String processId) {
+
+			List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+			List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+			
+			if(tasks.size()==0){
+				System.out.println("Prazna lista, nema vise taskova");
+			}
+			for(Task T: tasks)
+			{
+				System.out.println("Dodaje task "+T.getName());
+				taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+			}
+			
+			Task nextTask = tasks.get(0);
+			
+			// ukoliko mu nije dodeljen Asignee, ili ako je dodeljen neko ko nije demo
+			if(nextTask.getAssignee()==null || !nextTask.getAssignee().equals("demo")){
+				nextTask.setAssignee("autor"); // Asignee taska je urednik
+				taskService.saveTask(nextTask);
+			}
+			
+			TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+			List<FormField> properties = tfd.getFormFields();
+			
+	        return new FormFieldsDto(nextTask.getId(), processId, properties);
+	    }
+		
+		// klik kada izabere casopis, prelazak na servisni task za cuvanje izabranog casopisa
+		@PostMapping(path = "/sacuvajIzborNastavak/{taskId}", produces = "application/json")
+	    public @ResponseBody ResponseEntity sacuvajIzborNastavak(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
+			
+			HashMap<String, Object> map = this.mapListToDto(formData);
+			Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+			String processInstanceId = task.getProcessInstanceId();
+			
+			try{
+				runtimeService.setVariable(processInstanceId, "potvrdaNastavak", formData);
+				formService.submitTaskForm(taskId, map);
+		     				    
+			}catch(FormFieldValidationException e){
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+			return new ResponseEntity<>(HttpStatus.OK);
+	    }
+
+	
+	
 	
 	// ucitavanje forme gde korisnik bira casopis
 	@GetMapping(path = "/sledeciTaskIzbor/{processId}", produces = "application/json")
@@ -197,7 +253,7 @@ public class ObradaTekstaController
 		}
 		
 		System.out.println("Casopisa ima: " + casopisi.size());
-		return new ResponseEntity<List<Casopis>>(casopisi, HttpStatus.OK);
+		return new ResponseEntity<List<Casopis>>(aktivni, HttpStatus.OK);
 	}
 	
 	// korisnik unosi informacije o radu
@@ -262,7 +318,15 @@ public class ObradaTekstaController
 		return new ResponseEntity<>(HttpStatus.OK);
     }
 	
-	// METODA TREBA DA VRACA NAUCNE OBLASTI SAMO IZABRANOG CASOPISA
+	// KOMENTAR: METODA TREBA DA VRACA NAUCNE OBLASTI SAMO IZABRANOG CASOPISA
+	@RequestMapping(value="/getNOCasopis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
+	public ResponseEntity<List<NaucnaOblastCasopis>> getNOCasopis(){		
+		
+		List<NaucnaOblastCasopis> no = noRepository.findAll();
+		
+		return new ResponseEntity<List<NaucnaOblastCasopis>>(no, HttpStatus.OK);
+	}
+	
 	
 	// ucitavanje forme gde korisnik unosi koautore
 		@GetMapping(path = "/sledeciTaskKoautor/{processId}", produces = "application/json")
