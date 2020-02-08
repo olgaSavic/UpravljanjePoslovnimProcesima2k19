@@ -36,7 +36,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 
 @Service
-public class AASlanjeMejlaAutorIspService implements JavaDelegate{
+public class AASlanjeMejlaUrednikPdfService implements JavaDelegate {
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
@@ -56,15 +56,13 @@ public class AASlanjeMejlaAutorIspService implements JavaDelegate{
 	public void execute(DelegateExecution execution) throws Exception {
 		// TODO Auto-generated method stub
 		  
-		  String autorUsername = (String) execution.getVariable("autorVar");
-	      System.out.println("Slanje mejla autor username je: " + autorUsername);
-	      Korisnik autor = korisnikRepository.findOneByUsername(autorUsername);
+		  Korisnik urednik = getCurrentUser();
 	      
 	      String processInstanceId = execution.getProcessInstanceId();
 	      String fileName = (String) execution.getVariable("pdfFileName");
 	      byte[] decodedBytes = (byte[]) execution.getVariable("pdfRad");
 	     
-	      sendNotificaitionAsync(autor, processInstanceId, fileName, decodedBytes);      
+	      sendNotificaitionAsync(urednik, processInstanceId, fileName, decodedBytes);      
 	}
 	
 	
@@ -72,7 +70,7 @@ public class AASlanjeMejlaAutorIspService implements JavaDelegate{
 	public void sendNotificaitionAsync(Korisnik k, String processInstanceId, String fileName, byte[] decodedBytes) throws MailException, InterruptedException, MessagingException {
 
 		System.out.println("Slanje emaila...");
-		String content = "Neophodno je da ispravite pdf koji ste prilozili prilikom unosa informacija u radu!";
+		String content = "Odlucili ste da je rad tematski prihvatljiv, sada je neophodno pregledati pdf i odluciti da li je dobro formatiran!";
 		
 	    ByteArrayOutputStream outputStream = null;
 

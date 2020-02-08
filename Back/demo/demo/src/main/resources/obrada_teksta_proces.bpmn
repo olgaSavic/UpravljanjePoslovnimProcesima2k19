@@ -153,7 +153,7 @@
               <camunda:property id="readonly" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="tematskiPrihvatljiv" label="Rad je tematski prihvatljiv:" type="boolean" defaultValue="false" />
+          <camunda:formField id="tematskiPrihvatljiv" label="Rad je tematski prihvatljiv:" type="boolean" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1bruu8v</bpmn:incoming>
@@ -167,18 +167,17 @@
     <bpmn:sequenceFlow id="nijeTematskiP" name="nije tematski prihvatljiv" sourceRef="ExclusiveGateway_1n80a9d" targetRef="NotTematNeprihvatlj">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tematskiPrihvatljiv == false}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="tematskiPrihvatljiv" name="tematski prihvatljiv" sourceRef="ExclusiveGateway_1n80a9d" targetRef="pregledPDF">
+    <bpmn:sequenceFlow id="tematskiPrihvatljiv" name="tematski prihvatljiv" sourceRef="ExclusiveGateway_1n80a9d" targetRef="mejlUrednikPdf">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${tematskiPrihvatljiv == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:userTask id="pregledPDF" name="Pregled PDF-a" camunda:assignee="${glavniUrednikVar}">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="pdf2" label="Prilozen pdf:" type="string" defaultValue="${pdf}" />
           <camunda:formField id="formatiran" label="Rad je dobro formatiran:" type="boolean" />
           <camunda:formField id="komentarUrednikTem" label="Komentar za autora:" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>tematskiPrihvatljiv</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0qfscfm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0q7uxax</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:exclusiveGateway id="ExclusiveGateway_0se63fw">
@@ -230,7 +229,7 @@
             <camunda:value id="ekologija" name="Ekologija" />
             <camunda:value id="geografija" name="Geografija" />
           </camunda:formField>
-          <camunda:formField id="pdf" label="Putanja do PDF-a:" type="string" defaultValue="${pdf}" />
+          <camunda:formField id="pdfAutor" label="Putanja do PDF-a:" type="string" defaultValue="${pdf}" />
           <camunda:formField id="komentarUrednikAutor" label="Komentar glavnog urednika:" type="string" defaultValue="${komentarUrednikTem}" />
           <camunda:formField id="noviPdf" label="Priloziti novi pdf dokument:" type="string">
             <camunda:properties>
@@ -790,6 +789,11 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
     <bpmn:sequenceFlow id="hocuJosKoautora" name="hocuJosKoautora" sourceRef="ExclusiveGateway_0wpvb1r" targetRef="unosKoautora">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dodatniKoautor == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="mejlUrednikPdf" name="Slanje email-a glavnom uredniku sa pdf-om" camunda:class="root.demo.services.AASlanjeMejlaUrednikPdfService">
+      <bpmn:incoming>tematskiPrihvatljiv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0qfscfm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0qfscfm" sourceRef="mejlUrednikPdf" targetRef="pregledPDF" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="obrada_teksta_proces">
@@ -924,13 +928,13 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0ccdlqb_di" bpmnElement="tematskiPrihvatljiv">
         <di:waypoint x="2670" y="735" />
-        <di:waypoint x="2670" y="600" />
+        <di:waypoint x="2670" y="610" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2641" y="667" width="90" height="14" />
+          <dc:Bounds x="2625" y="694" width="90" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_0gq9jns_di" bpmnElement="pregledPDF">
-        <dc:Bounds x="2620" y="520" width="100" height="80" />
+        <dc:Bounds x="2620" y="380" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ExclusiveGateway_0se63fw_di" bpmnElement="ExclusiveGateway_0se63fw" isMarkerVisible="true">
         <dc:Bounds x="3015" y="225" width="50" height="50" />
@@ -1408,7 +1412,7 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
         <dc:Bounds x="2800" y="720" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0q7uxax_di" bpmnElement="SequenceFlow_0q7uxax">
-        <di:waypoint x="2670" y="520" />
+        <di:waypoint x="2670" y="380" />
         <di:waypoint x="2670" y="250" />
         <di:waypoint x="3015" y="250" />
       </bpmndi:BPMNEdge>
@@ -1611,6 +1615,13 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1937" y="862" width="86" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1m30yf3_di" bpmnElement="mejlUrednikPdf">
+        <dc:Bounds x="2620" y="530" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qfscfm_di" bpmnElement="SequenceFlow_0qfscfm">
+        <di:waypoint x="2670" y="530" />
+        <di:waypoint x="2670" y="460" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -43,7 +43,10 @@ public class AASlanjeMejlaIstekloTehnickiService implements JavaDelegate
 	public void execute(DelegateExecution execution) throws Exception {
 		// TODO Auto-generated method stub
 		  
-	      Korisnik autor = getCurrentUser();
+		String autorUsername = (String) execution.getVariable("autorVar");
+	      System.out.println("Slanje mejla isteklo vreme username je: " + autorUsername);
+	      Korisnik autor = korisnikRepository.findOneByUsername(autorUsername);
+	      
 	      String processInstanceId = execution.getProcessInstanceId();
 	     
 	      //sendNotificaitionAsync(autor, processInstanceId);

@@ -161,6 +161,26 @@ public class ObradaTekstaController
 	        return new FormFieldsDto(nextTask.getId(), processId, properties);
 	    }
 		
+		@RequestMapping(value="/trenutniKorisnik",method = RequestMethod.GET)
+		public Korisnik getCurrentUser() {
+			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+			
+			System.out.println("Principal.toString() je: " + principal.toString());
+			Korisnik k = korisnikRepository.findOneByUsername(principal.toString());
+			if (k != null) 
+			{
+				String kIme = k.getUsername();
+				System.out.println("Username getCurrentUser je: " + kIme);
+			}
+			else 
+			{
+				System.out.println("Korisnik je null!");
+			}
+			
+			
+			return k;
+		}
+		
 		// klik kada izabere casopis, prelazak na servisni task za cuvanje izabranog casopisa
 		@PostMapping(path = "/sacuvajIzborNastavak/{taskId}", produces = "application/json")
 	    public @ResponseBody ResponseEntity sacuvajIzborNastavak(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
@@ -251,6 +271,10 @@ public class ObradaTekstaController
 		try{
 			System.out.println("Postavljen je glavniUrednikVar na: " + casopis.getGlavniUrednik().getUsername());
 			runtimeService.setVariable(processInstanceId, "glavniUrednikVar", casopis.getGlavniUrednik().getUsername());
+			
+			Korisnik autor = getCurrentUser();
+			System.out.println("Postavljen je autorVar na: " + autor.getUsername());
+			runtimeService.setVariable(processInstanceId, "autorVar", autor.getUsername());
 			
 			runtimeService.setVariable(processInstanceId, "izabranCasopis", formData);
 			formService.submitTaskForm(taskId, map);
@@ -350,6 +374,11 @@ public class ObradaTekstaController
 		byte[] decodedBytes = decoder.decodeBuffer(dto.getFile());
 
 		File file = new File("pdf/" + dto.getFileName());
+		
+		runtimeService.setVariable(processInstanceId, "pdfRad", decodedBytes); 
+		runtimeService.setVariable(processInstanceId, "pdfFileName", dto.getFileName()); 
+		
+		System.out.println("U varijablu je sacuvan rad sa nazivom: " + dto.getFileName());
 		FileOutputStream fop = new FileOutputStream(file);
 
 		fop.write(decodedBytes);
@@ -432,7 +461,7 @@ public class ObradaTekstaController
 		     // KOMENTAR: mozda promeniti na trenutno ulogovanog, jer ima vise autora
 		     else if (user.getTip().equals("AUTOR"))// kupi taskove od autora
 		     {
-		        tasks.addAll(taskService.createTaskQuery().processDefinitionKey("obrada_teksta_proces").taskAssignee(username).list());
+		        tasks.addAll(taskService.createTaskQuery().processDefinitionKey("obrada_teksta_proces").taskAssignee("autor").list());
 		     }
 		     for (Task task : tasks) {
 		    	 TaskDto t = new TaskDto(task.getId(), task.getName(), task.getAssignee());
@@ -462,11 +491,7 @@ public class ObradaTekstaController
 				TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 				List<FormField> properties = tfd.getFormFields();
 				
-				for(FormField field: properties)
-				{
-					System.out.println("Nasao sam polje!");
-					System.out.println(field.getDefaultValue().toString());
-				}
+				
 				
 		        return new FormFieldsDto(nextTask.getId(), processId, properties);
 		    }
@@ -481,25 +506,6 @@ public class ObradaTekstaController
 				
 				TaskFormData tfd = formService.getTaskFormData(taskId);
 				List<FormField> formFields = tfd.getFormFields();
-				
-				
-				
-				/*
-				for(FormField field : formFields) {
-					
-					//ako treba prikazati vrijednost u polju
-					if(field.getProperties().containsKey("fillValue")) {
-						field.setValue(runtimeService.getVariable(task.getProcessInstanceId(), field.getId()).toString());
-					}
-					
-					//ako treba da je polje readonly
-					if(field.getProperties().containsKey("readonly")) {
-						fieldDTO.setReadonly(true);
-					}
-					
-					
-				}
-				*/
 							
 				try{
 					runtimeService.setVariable(processInstanceId, "pregledUrednika", formData);
@@ -531,14 +537,7 @@ public class ObradaTekstaController
 					
 					TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 					List<FormField> properties = tfd.getFormFields();
-					
-					/*
-					for(FormField field: properties)
-					{
-						System.out.println("Nasao sam polje!");
-						System.out.println(field.getDefaultValue().toString());
-					}
-					*/
+	
 					
 			        return new FormFieldsDto(nextTask.getId(), processId, properties);
 			    }	
@@ -553,25 +552,7 @@ public class ObradaTekstaController
 					
 					TaskFormData tfd = formService.getTaskFormData(taskId);
 					List<FormField> formFields = tfd.getFormFields();
-					
-					
-					
-					/*
-					for(FormField field : formFields) {
-						
-						//ako treba prikazati vrijednost u polju
-						if(field.getProperties().containsKey("fillValue")) {
-							field.setValue(runtimeService.getVariable(task.getProcessInstanceId(), field.getId()).toString());
-						}
-						
-						//ako treba da je polje readonly
-						if(field.getProperties().containsKey("readonly")) {
-							fieldDTO.setReadonly(true);
-						}
-						
-						
-					}
-					*/
+	
 								
 					try{
 						runtimeService.setVariable(processInstanceId, "pregledUrednikaPdf", formData);
@@ -604,14 +585,6 @@ public class ObradaTekstaController
 						
 						TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 						List<FormField> properties = tfd.getFormFields();
-						
-						/*
-						for(FormField field: properties)
-						{
-							System.out.println("Nasao sam polje!");
-							System.out.println(field.getDefaultValue().toString());
-						}
-						*/
 						
 				        return new FormFieldsDto(nextTask.getId(), processId, properties);
 				    }	
