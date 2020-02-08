@@ -64,7 +64,7 @@ public class AASlanjeMejlaAutorIspService implements JavaDelegate{
 	      String fileName = (String) execution.getVariable("pdfFileName");
 	      byte[] decodedBytes = (byte[]) execution.getVariable("pdfRad");
 	     
-	      sendNotificaitionAsync(autor, processInstanceId, fileName, decodedBytes);      
+	      //sendNotificaitionAsync(autor, processInstanceId, fileName, decodedBytes);      
 	}
 	
 	

@@ -62,7 +62,7 @@ public class AASlanjeMejlaUrednikPdfService implements JavaDelegate {
 	      String fileName = (String) execution.getVariable("pdfFileName");
 	      byte[] decodedBytes = (byte[]) execution.getVariable("pdfRad");
 	     
-	      sendNotificaitionAsync(urednik, processInstanceId, fileName, decodedBytes);      
+	      //sendNotificaitionAsync(urednik, processInstanceId, fileName, decodedBytes);      
 	}
 	
 	

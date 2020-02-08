@@ -5,7 +5,7 @@
       <label for={{field.id}}>{{field.label}}</label>
 
 
-      <input type="text" name={{field.id}} ngModel  *ngIf="field.type.name=='string' && field.id != 'noviPdf' && field.defaultValue == null" >
+      <input type="text" name={{field.id}} ngModel  *ngIf="field.type.name=='string' && field.id != 'pdf' && field.defaultValue == null" >
       <input type="checkbox" name={{field.id}} ngModel  *ngIf="field.type.name=='boolean' && field.defaultValue == null">
       <input type="number" name={{field.id}} ngModel  *ngIf="field.type.name=='long' && field.defaultValue == null">
       <select name="field.id" *ngIf="field.type.name=='enum' && field.defaultValue == null">
@@ -16,6 +16,9 @@
 
       &nbsp;&nbsp;
       <label for = {{field.id}}> <b><i>{{field.defaultValue}}</i></b></label>
+
+      <input  type="file" accept="application/pdf" *ngIf="field.properties.type == 'file'" (change)="fileChoserListener($event.target.files, field)">
+
     </div>
 
     <div>

@@ -565,7 +565,7 @@ public class ObradaTekstaController
 			    }	
 				
 				
-				 // ucitavanje forme gde urednik pregleda pdf, nakon sto je potvrdio da je rad tematski prihvatljiv
+				 // ucitavanje forme gde autor pregleda svoj rad
 				 @GetMapping(path = "/sledeciTaskAutorKorekcija/{processId}", produces = "application/json")
 				    public @ResponseBody FormFieldsDto sledeciTaskAutorKorekcija(@PathVariable String processId) {
 
@@ -587,22 +587,26 @@ public class ObradaTekstaController
 						List<FormField> properties = tfd.getFormFields();
 						
 				        return new FormFieldsDto(nextTask.getId(), processId, properties);
-				    }	
+				    }
 				 
-				 	// urednik nakon sto pregleda pdf i klikne na submit
-					@PostMapping(path = "/sacuvajKorekcijaAutorSaPdf/{taskId}", produces = "application/json")
-				    public @ResponseBody ResponseEntity sacuvajKorekcijaAutorSaPdf(@RequestBody FormSubmissionWithFileDto dto, @PathVariable String taskId) throws IOException {
+					@PostMapping(path = "/sacuvajKorekcijuAutorSaPdf/{taskId}", produces = "application/json")
+				    public @ResponseBody ResponseEntity sacuvajKorekcijuAutorSaPdf(@RequestBody FormSubmissionWithFileDto dto, @PathVariable String taskId) throws IOException {
 						HashMap<String, Object> map = this.mapListToDto(dto.getForm());
 						Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 						String processInstanceId = task.getProcessInstanceId();
 						
-						runtimeService.setVariable(processInstanceId, "autorNewRad", dto.getForm()); 
+						//runtimeService.setVariable(processInstanceId, "infoRad", dto.getForm()); 
 						formService.submitTaskForm(taskId, map);
 						
 						BASE64Decoder decoder = new BASE64Decoder();
 						byte[] decodedBytes = decoder.decodeBuffer(dto.getFile());
 
 						File file = new File("pdf/" + dto.getFileName());
+						
+						runtimeService.setVariable(processInstanceId, "pdfRad", decodedBytes); 
+						runtimeService.setVariable(processInstanceId, "pdfFileName", dto.getFileName()); 
+						
+						System.out.println("U varijablu je sacuvan novi rad sa nazivom: " + dto.getFileName());
 						FileOutputStream fop = new FileOutputStream(file);
 
 						fop.write(decodedBytes);
@@ -610,6 +614,9 @@ public class ObradaTekstaController
 						fop.close();
 						
 				        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-				    }				
+				    }
+
+				 
+				
 
 }

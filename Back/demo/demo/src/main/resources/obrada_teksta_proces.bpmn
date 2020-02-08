@@ -222,16 +222,8 @@
           <camunda:formField id="naslov" label="Naslov:" type="string" defaultValue="${naslov}" />
           <camunda:formField id="kljucniPojmovi" label="Kljucni pojmovi:" type="string" defaultValue="${kljucniPojmovi}" />
           <camunda:formField id="apstrakt" label="Apstrakt:" type="string" defaultValue="${apstrakt}" />
-          <camunda:formField id="naucnaOblast" label="Naucna oblast" type="enum" defaultValue="${naucnaOblast}">
-            <camunda:value id="knjizevnost" name="Knjizevnost" />
-            <camunda:value id="biologija" name="Biologija" />
-            <camunda:value id="istorija" name="Istorija" />
-            <camunda:value id="ekologija" name="Ekologija" />
-            <camunda:value id="geografija" name="Geografija" />
-          </camunda:formField>
-          <camunda:formField id="pdfAutor" label="Putanja do PDF-a:" type="string" defaultValue="${pdf}" />
-          <camunda:formField id="komentarUrednikAutor" label="Komentar glavnog urednika:" type="string" defaultValue="${komentarUrednikTem}" />
-          <camunda:formField id="noviPdf" label="Priloziti novi pdf dokument:" type="string">
+          <camunda:formField id="komentarUrednikTem" label="Komentar glavnog urednika:" type="string" defaultValue="${komentarUrednikTem}" />
+          <camunda:formField id="pdf" label="Priloziti novi/zameniti postojeci pdf dokument :" type="string">
             <camunda:properties>
               <camunda:property id="type" value="file" />
             </camunda:properties>
@@ -241,7 +233,7 @@
       <bpmn:incoming>SequenceFlow_1ca00rt</bpmn:incoming>
       <bpmn:outgoing>korak4sePonavlja</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="korak4sePonavlja" name="korak 4 se ponavlja - slanje email-a" sourceRef="ispravkaRadaAutor" targetRef="slanjeEmailNot" />
+    <bpmn:sequenceFlow id="korak4sePonavlja" name="korak 5 se ponavlja - slanje email-a" sourceRef="ispravkaRadaAutor" targetRef="slanjeEmailNot" />
     <bpmn:boundaryEvent id="satic1" attachedToRef="ispravkaRadaAutor">
       <bpmn:outgoing>SequenceFlow_0cmh1kh</bpmn:outgoing>
       <bpmn:timerEventDefinition>

@@ -3,6 +3,7 @@ import {UserService} from '../services/users/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {RepositoryService} from '../services/repository/repository.service';
 import {ObradaService} from '../services/obrada/obrada.service';
+import {FormSubmissionWithFileDto} from '../model/FormSubmissionWithFileDto';
 
 @Component({
   selector: 'app-a-izmena-rada-autor',
@@ -28,6 +29,9 @@ export class AIzmenaRadaAutorComponent implements OnInit {
 
   private dalje: any ;
 
+  private fileField = null;
+  private fileName = null;
+
   constructor(private userService : UserService,
               private route: ActivatedRoute,
               protected  router: Router,
@@ -40,7 +44,7 @@ export class AIzmenaRadaAutorComponent implements OnInit {
     const taskId = this.route.snapshot.params.taskId ;
     this.task = taskId;
 
-    let x = obradaService.sledeciTaskPregledUrednik(processInstanceId);
+    let x = obradaService.sledeciTaskAutorKorekcija(processInstanceId);
 
     x.subscribe(
       res => {
@@ -71,39 +75,57 @@ export class AIzmenaRadaAutorComponent implements OnInit {
     let o = new Array();
 
     for (var property in value) {
-      console.log(property);
-      console.log(value[property]);
-      o.push({fieldId : property, fieldValue : value[property]});
-
-      if (property == 'tematskiPrihvatljiv')
-      {
-        this.dalje = value[property];
+      if(property.toString() == "pdf") {
+        value[property] = this.fileName;
       }
+      for (const property in value) {
+
+          o.push({fieldId : property, categories : value[property]});
+
+
+        console.log('niz za slanje izgleda');
+        console.log(o);
+      }
+      console.log(o);
     }
 
-
     console.log(o);
-    let x = this.obradaService.sacuvajPregledUrednika(o, this.formFieldsDto.taskId);
+
+    let y = new FormSubmissionWithFileDto(o, this.fileField.toString(), this.fileName.toString());
+    let x = this.obradaService.sacuvajKorekcijuAutorSaPdf(y, this.formFieldsDto.taskId);
 
     x.subscribe(
       res => {
         console.log(res)
 
-        alert("Uspesno ste pregledali rad!");
+        alert("Uspesno ste izmenili rad!");
+        // nakon ovoga treba da se loguje urednik, da pregleda rad
+        this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
 
-        if (this.dalje == true) { // rad je tematski prihvatljiv, pa se nastavlja na dalju proveru pdf-a
-          this.router.navigateByUrl('pregledPdfUrednik/' + this.processInstance);
-        }
-        else // proces se terminira
-        {
-          this.router.navigateByUrl('krajTematskiNeprihvatljiv');
-        }
 
       },
       err => {
-        console.log("Doslo je do greske, pa rad nije uspesno pregledan!");
+        console.log("Doslo je do greske, pa rad nije uspesno izmenjen!");
       }
     );
+  }
+
+  fileChoserListener(files: FileList, field)
+  {
+    let fileToUpload = files.item(0);
+    field.fileName = files.item(0).name;
+    this.fileName = files.item(0).name;
+
+    let fileReader = new FileReader();
+
+    fileReader.onload = (e) => {
+
+      field.value = fileReader.result;
+      this.fileField = fileReader.result;
+      console.log(fileReader.result);
+    }
+
+    fileReader.readAsDataURL(files.item(0))
   }
 
 
