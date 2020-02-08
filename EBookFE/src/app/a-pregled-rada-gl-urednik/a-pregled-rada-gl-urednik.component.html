@@ -4,14 +4,22 @@
     <div *ngFor="let field of formFields" >
       <label for={{field.id}}>{{field.label}}</label>
 
-      <input type="text" name={{field.id}} ngModel  *ngIf="field.type.name=='string'" >
+
       <input type="checkbox" name={{field.id}} ngModel  *ngIf="field.type.name=='boolean'">
+
+      <!--
+      <input type="text" name={{field.id}} ngModel  *ngIf="field.type.name=='string'" >
       <input type="number" name={{field.id}} ngModel  *ngIf="field.type.name=='long'">
       <select name="field.id" *ngIf="field.type.name=='enum'">
         <option *ngFor="let val of enumValues" value={{val}}>
           {{field.type.values[val]}}
         </option>
       </select>
+      -->
+        &nbsp;&nbsp;
+        <label for = {{field.id}}> <b><i>{{field.defaultValue}}</i></b></label>
+
+
     </div>
 
     <div>

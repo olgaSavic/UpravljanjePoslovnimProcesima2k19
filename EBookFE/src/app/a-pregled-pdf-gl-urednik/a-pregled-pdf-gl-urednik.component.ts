@@ -5,12 +5,11 @@ import {RepositoryService} from '../services/repository/repository.service';
 import {ObradaService} from '../services/obrada/obrada.service';
 
 @Component({
-  selector: 'app-a-izmena-rada-autor',
-  templateUrl: './a-izmena-rada-autor.component.html',
-  styleUrls: ['./a-izmena-rada-autor.component.css']
+  selector: 'app-a-pregled-pdf-gl-urednik',
+  templateUrl: './a-pregled-pdf-gl-urednik.component.html',
+  styleUrls: ['./a-pregled-pdf-gl-urednik.component.css']
 })
-export class AIzmenaRadaAutorComponent implements OnInit {
-
+export class APregledPdfGlUrednikComponent implements OnInit {
 
 
   private repeated_password = "";
@@ -40,7 +39,7 @@ export class AIzmenaRadaAutorComponent implements OnInit {
     const taskId = this.route.snapshot.params.taskId ;
     this.task = taskId;
 
-    let x = obradaService.sledeciTaskPregledUrednik(processInstanceId);
+    let x = obradaService.sledeciTaskPregledPdfUrednik(processInstanceId);
 
     x.subscribe(
       res => {
@@ -75,7 +74,7 @@ export class AIzmenaRadaAutorComponent implements OnInit {
       console.log(value[property]);
       o.push({fieldId : property, fieldValue : value[property]});
 
-      if (property == 'tematskiPrihvatljiv')
+      if (property == 'formatiran')
       {
         this.dalje = value[property];
       }
@@ -83,7 +82,7 @@ export class AIzmenaRadaAutorComponent implements OnInit {
 
 
     console.log(o);
-    let x = this.obradaService.sacuvajPregledUrednika(o, this.formFieldsDto.taskId);
+    let x = this.obradaService.sacuvajPregledUrednikaPdf(o, this.formFieldsDto.taskId);
 
     x.subscribe(
       res => {
@@ -91,12 +90,12 @@ export class AIzmenaRadaAutorComponent implements OnInit {
 
         alert("Uspesno ste pregledali rad!");
 
-        if (this.dalje == true) { // rad je tematski prihvatljiv, pa se nastavlja na dalju proveru pdf-a
-          this.router.navigateByUrl('pregledPdfUrednik/' + this.processInstance);
+        if (this.dalje == true) { // treba da se uloguje urednik naucne oblasti, pa da nastavi posao
+          this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
         }
-        else // proces se terminira
+        else // treba da se uloguje autor i da pregleda rad itd.
         {
-          this.router.navigateByUrl('krajTematskiNeprihvatljiv');
+          this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
         }
 
       },
@@ -105,7 +104,5 @@ export class AIzmenaRadaAutorComponent implements OnInit {
       }
     );
   }
-
-
 
 }

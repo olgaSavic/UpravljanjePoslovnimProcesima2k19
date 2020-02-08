@@ -25,6 +25,8 @@ export class APregledRadaGlUrednikComponent implements OnInit {
   private naucneOblasti = [];
   private task = "";
 
+  private dalje: any ;
+
   constructor(private userService : UserService,
               private route: ActivatedRoute,
               protected  router: Router,
@@ -71,6 +73,11 @@ export class APregledRadaGlUrednikComponent implements OnInit {
       console.log(property);
       console.log(value[property]);
       o.push({fieldId : property, fieldValue : value[property]});
+
+      if (property == 'tematskiPrihvatljiv')
+      {
+        this.dalje = value[property];
+      }
     }
 
 
@@ -82,7 +89,14 @@ export class APregledRadaGlUrednikComponent implements OnInit {
         console.log(res)
 
         alert("Uspesno ste pregledali rad!");
-        this.router.navigateByUrl('loginObrada/' + this.processInstance);
+
+        if (this.dalje == true) { // rad je tematski prihvatljiv, pa se nastavlja na dalju proveru pdf-a
+          this.router.navigateByUrl('pregledPdfUrednik/' + this.processInstance);
+        }
+        else // proces se terminira
+        {
+          this.router.navigateByUrl('krajTematskiNeprihvatljiv');
+        }
 
       },
       err => {

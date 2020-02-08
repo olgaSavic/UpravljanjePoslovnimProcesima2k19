@@ -23,14 +23,15 @@ import {AUnosInfoRadComponent} from './a-unos-info-rad/a-unos-info-rad.component
 import {AUnosKoautoraComponent} from './a-unos-koautora/a-unos-koautora.component';
 import {APotvrdaNastavakComponent} from './a-potvrda-nastavak/a-potvrda-nastavak.component';
 import {APregledRadaGlUrednikComponent} from './a-pregled-rada-gl-urednik/a-pregled-rada-gl-urednik.component';
-import {AHomepageListaTaskovaComponent} from './a-homepage-lista-taskova/a-homepage-lista-taskova.component';
 import {AIzmenaRadaAutorComponent} from './a-izmena-rada-autor/a-izmena-rada-autor.component';
 import {ALoginDrugiObradaComponent} from './a-login-drugi-obrada/a-login-drugi-obrada.component';
 import {AHomepageComponent} from './a-homepage/a-homepage.component';
-import {PleaseWorkComponent} from './please-work/please-work.component';
+import {APregledPdfGlUrednikComponent} from './a-pregled-pdf-gl-urednik/a-pregled-pdf-gl-urednik.component';
+import {AKrajTematskiNeprihvatljivComponent} from './a-kraj-tematski-neprihvatljiv/a-kraj-tematski-neprihvatljiv.component';
 
 const routes: Routes = [
 
+  // KT3 - Proces registracije
   { path: 'naucnaOblast/:processInstanceId', component: NaucnaOblastComponent },
   { path: 'finishPage/:processInstanceId', component: FinishPageComponent },
   { path: 'finishPageRecenzent/:processInstanceId', component: FinishPageRecenzentComponent },
@@ -41,6 +42,7 @@ const routes: Routes = [
   { path: 'novaPotvrdaAdmin/:processInstanceId', component: PotvrdaAdminComponent },
   { path: 'recAdmin/:processInstanceId', component: RecencentAdminComponent },
 
+  // KT3 - Proces kreiranja novog casopisa
   { path: 'kreiranjeCasopisa', component: KreiranjeCasopisaComponent},
   { path: 'naucnaOblastCasopis/:processInstanceId', component: NaucnaOblastCasopisComponent },
   { path: 'uredRec/:processInstanceId', component: UredniciRecenzentiComponent },
@@ -48,19 +50,21 @@ const routes: Routes = [
   { path: 'aktivacijaCasAdmin/:processInstanceId', component: AktivacijaCasopisAdminComponent },
   { path: 'finishPageCasopis', component: FinishPageCasopisComponent },
 
-  // KT 4 = ODBRANA
+  // KT 4 = ODBRANA - Proces obrade podnetog teksta
   { path: 'zapocniObradu', component: AZapocniObraduComponent },
   { path: 'loginObrada/:processInstanceId', component: ALoginObradaComponent },
   { path: 'potvrdaNastavak/:processInstanceId', component: APotvrdaNastavakComponent },
   { path: 'izborCasopisa/:processInstanceId', component: AIzborCasopisaComponent },
   { path: 'unosInfoRad/:processInstanceId', component: AUnosInfoRadComponent },
   { path: 'unosKoautora/:processInstanceId', component: AUnosKoautoraComponent },
-  // SREDITI PARAMETAR U URL
   { path: 'pregledRadaUrednik/:processInstanceId/:taskId', component: APregledRadaGlUrednikComponent },
   { path: 'izmenaRadaAutor/:processInstanceId/:taskId', component: AIzmenaRadaAutorComponent },
   { path: 'homepage/:processInstanceId', component: AHomepageComponent },
   { path: 'loginDrugiObrada/:processInstanceId', component: ALoginDrugiObradaComponent },
-  { path: 'taskovi/:processInstanceId', component: PleaseWorkComponent }
+  { path: 'pregledPdfUrednik/:processInstanceId', component: APregledPdfGlUrednikComponent},
+  { path: 'krajTematskiNeprihvatljiv', component: AKrajTematskiNeprihvatljivComponent}
+
+
 
 
 

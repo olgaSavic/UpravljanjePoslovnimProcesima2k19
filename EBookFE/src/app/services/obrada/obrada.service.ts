@@ -105,6 +105,16 @@ export class ObradaService {
     return this.httpClient.post('http://localhost:8080/obrada/sacuvajPregledUrednika/'.concat(taskId), rad) as Observable<any>;
   }
 
+  // -----------------------------------------------------
+  sledeciTaskPregledPdfUrednik(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskPregledPdfUrednik/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajPregledUrednikaPdf(rad, taskId) {
+    console.log(rad);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajPregledUrednikaPdf/'.concat(taskId), rad) as Observable<any>;
+  }
+
 
 
 

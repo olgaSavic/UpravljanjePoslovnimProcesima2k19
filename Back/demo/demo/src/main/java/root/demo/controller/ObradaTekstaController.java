@@ -147,11 +147,13 @@ public class ObradaTekstaController
 			
 			Task nextTask = tasks.get(0);
 			
+			/*
 			// ukoliko mu nije dodeljen Asignee, ili ako je dodeljen neko ko nije demo
 			if(nextTask.getAssignee()==null || !nextTask.getAssignee().equals("demo") || !nextTask.getAssignee().equals("urednik") || !nextTask.getAssignee().equals("recenzent")){
 				nextTask.setAssignee("autor");
 				taskService.saveTask(nextTask);
 			}
+			*/
 			
 			TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 			List<FormField> properties = tfd.getFormFields();
@@ -197,12 +199,7 @@ public class ObradaTekstaController
 		}
 		
 		Task nextTask = tasks.get(0);
-		
-		// ukoliko mu nije dodeljen Asignee, ili ako je dodeljen neko ko nije demo
-		if(nextTask.getAssignee()==null || !nextTask.getAssignee().equals("demo") || !nextTask.getAssignee().equals("urednik") || !nextTask.getAssignee().equals("recenzent")){
-			nextTask.setAssignee("autor");
-			taskService.saveTask(nextTask);
-		}
+
 		
 		TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 		List<FormField> properties = tfd.getFormFields();
@@ -218,8 +215,10 @@ public class ObradaTekstaController
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 		String processInstanceId = task.getProcessInstanceId();
 		
+		Casopis casopis = new Casopis();
 		for(FormSubmissonDTO item: formData){
 			String fieldId = item.getFieldId();
+			
 			
 			if(fieldId.equals("casopisiL"))
 			{
@@ -227,12 +226,32 @@ public class ObradaTekstaController
 					System.out.println("Mora biti izabran tacno jedan casopis!");	
 					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 				}
+				
+				List<Casopis> allCasopisi = casopisRepository.findAll();
+				  for(Casopis c : allCasopisi){
+					  for(String selectedEd:item.getCategories())
+					  {
+						  String idS= c.getId().toString();
+						  
+						  if(idS.equals(selectedEd)){
+							  System.out.println(c.getNaziv());
+							  casopis = casopisRepository.findOneByIssn(c.getIssn());
+							  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
+							  
+							  break ;
+							  
+						  }
+					  }
+				  }
 			}
 		
 			
 		}
 		
 		try{
+			System.out.println("Postavljen je glavniUrednikVar na: " + casopis.getGlavniUrednik().getUsername());
+			runtimeService.setVariable(processInstanceId, "glavniUrednikVar", casopis.getGlavniUrednik().getUsername());
+			
 			runtimeService.setVariable(processInstanceId, "izabranCasopis", formData);
 			formService.submitTaskForm(taskId, map);
 	     				    
@@ -278,12 +297,6 @@ public class ObradaTekstaController
 		}
 		
 		Task nextTask = tasks.get(0);
-		
-		// ukoliko mu nije dodeljen Asignee, ili ako je dodeljen neko ko nije demo
-		if(nextTask.getAssignee()==null || !nextTask.getAssignee().equals("demo") || !nextTask.getAssignee().equals("urednik") || !nextTask.getAssignee().equals("recenzent")){
-			nextTask.setAssignee("autor");
-			taskService.saveTask(nextTask);
-		}
 		
 		TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 		List<FormField> properties = tfd.getFormFields();
@@ -346,11 +359,6 @@ public class ObradaTekstaController
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 	
-	
-	
-	
-
-	
 	// KOMENTAR: METODA TREBA DA VRACA NAUCNE OBLASTI SAMO IZABRANOG CASOPISA
 	@RequestMapping(value="/getNOCasopis", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
 	public ResponseEntity<List<NaucnaOblastCasopis>> getNOCasopis(){		
@@ -359,7 +367,6 @@ public class ObradaTekstaController
 		
 		return new ResponseEntity<List<NaucnaOblastCasopis>>(no, HttpStatus.OK);
 	}
-	
 	
 	// ucitavanje forme gde korisnik unosi koautore
 		@GetMapping(path = "/sledeciTaskKoautor/{processId}", produces = "application/json")
@@ -378,12 +385,6 @@ public class ObradaTekstaController
 			}
 			
 			Task nextTask = tasks.get(0);
-			
-			// ukoliko mu nije dodeljen Asignee, ili ako je dodeljen neko ko nije demo
-			if(nextTask.getAssignee()==null || !nextTask.getAssignee().equals("demo") || !nextTask.getAssignee().equals("urednik") || !nextTask.getAssignee().equals("recenzent")){
-				nextTask.setAssignee("autor");
-				taskService.saveTask(nextTask);
-			}
 			
 			TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 			List<FormField> properties = tfd.getFormFields();
@@ -422,11 +423,10 @@ public class ObradaTekstaController
 		          }
 		       }
 		       
-		       
 		     List<Task> tasks = new ArrayList<Task>();
 		     if(user.getTip().equals("UREDNIK")) // kupi taskove od urednika
 		     {
-		        tasks.addAll(taskService.createTaskQuery().processDefinitionKey("obrada_teksta_proces").taskAssignee("urednik").list());
+		        tasks.addAll(taskService.createTaskQuery().processDefinitionKey("obrada_teksta_proces").taskAssignee(user.getUsername()).list());
 		     }
 		     
 		     // KOMENTAR: mozda promeniti na trenutno ulogovanog, jer ima vise autora
@@ -440,7 +440,6 @@ public class ObradaTekstaController
 		     }	    
 		       return new ResponseEntity(dtos,  HttpStatus.OK);
 		   }		
-	
 		 
 		 // ucitavanje forme gde urednik pregleda ono uneseno o radu
 		 @GetMapping(path = "/sledeciTaskPregledUrednik/{processId}", produces = "application/json")
@@ -460,14 +459,14 @@ public class ObradaTekstaController
 				
 				Task nextTask = tasks.get(0);
 				
-				// ukoliko mu nije dodeljen Asignee, ili ako je dodeljen neko ko nije demo
-				if(nextTask.getAssignee()==null || !nextTask.getAssignee().equals("demo") || !nextTask.getAssignee().equals("urednik") || !nextTask.getAssignee().equals("recenzent")){
-					nextTask.setAssignee("autor");
-					taskService.saveTask(nextTask);
-				}
-				
 				TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 				List<FormField> properties = tfd.getFormFields();
+				
+				for(FormField field: properties)
+				{
+					System.out.println("Nasao sam polje!");
+					System.out.println(field.getDefaultValue().toString());
+				}
 				
 		        return new FormFieldsDto(nextTask.getId(), processId, properties);
 		    }
@@ -479,6 +478,28 @@ public class ObradaTekstaController
 				HashMap<String, Object> map = this.mapListToDto(formData);
 				Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 				String processInstanceId = task.getProcessInstanceId();
+				
+				TaskFormData tfd = formService.getTaskFormData(taskId);
+				List<FormField> formFields = tfd.getFormFields();
+				
+				
+				
+				/*
+				for(FormField field : formFields) {
+					
+					//ako treba prikazati vrijednost u polju
+					if(field.getProperties().containsKey("fillValue")) {
+						field.setValue(runtimeService.getVariable(task.getProcessInstanceId(), field.getId()).toString());
+					}
+					
+					//ako treba da je polje readonly
+					if(field.getProperties().containsKey("readonly")) {
+						fieldDTO.setReadonly(true);
+					}
+					
+					
+				}
+				*/
 							
 				try{
 					runtimeService.setVariable(processInstanceId, "pregledUrednika", formData);
@@ -489,6 +510,133 @@ public class ObradaTekstaController
 				}
 				return new ResponseEntity<>(HttpStatus.OK);
 		    }
-	
+
+			 // ucitavanje forme gde urednik pregleda pdf, nakon sto je potvrdio da je rad tematski prihvatljiv
+			 @GetMapping(path = "/sledeciTaskPregledPdfUrednik/{processId}", produces = "application/json")
+			    public @ResponseBody FormFieldsDto sledeciTaskPregledPdfUrednik(@PathVariable String processId) {
+
+					List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+					List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+					
+					if(tasks.size()==0){
+						System.out.println("Prazna lista, nema vise taskova");
+					}
+					for(Task T: tasks)
+					{
+						System.out.println("Dodaje task "+T.getName());
+						taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+					}
+					
+					Task nextTask = tasks.get(0);
+					
+					TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+					List<FormField> properties = tfd.getFormFields();
+					
+					/*
+					for(FormField field: properties)
+					{
+						System.out.println("Nasao sam polje!");
+						System.out.println(field.getDefaultValue().toString());
+					}
+					*/
+					
+			        return new FormFieldsDto(nextTask.getId(), processId, properties);
+			    }	
+			 
+			 	// urednik nakon sto pregleda pdf i klikne na submit
+				@PostMapping(path = "/sacuvajPregledUrednikaPdf/{taskId}", produces = "application/json")
+			    public @ResponseBody ResponseEntity sacuvajPregledUrednikaPdf(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
+					
+					HashMap<String, Object> map = this.mapListToDto(formData);
+					Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+					String processInstanceId = task.getProcessInstanceId();
+					
+					TaskFormData tfd = formService.getTaskFormData(taskId);
+					List<FormField> formFields = tfd.getFormFields();
+					
+					
+					
+					/*
+					for(FormField field : formFields) {
+						
+						//ako treba prikazati vrijednost u polju
+						if(field.getProperties().containsKey("fillValue")) {
+							field.setValue(runtimeService.getVariable(task.getProcessInstanceId(), field.getId()).toString());
+						}
+						
+						//ako treba da je polje readonly
+						if(field.getProperties().containsKey("readonly")) {
+							fieldDTO.setReadonly(true);
+						}
+						
+						
+					}
+					*/
+								
+					try{
+						runtimeService.setVariable(processInstanceId, "pregledUrednikaPdf", formData);
+						formService.submitTaskForm(taskId, map);
+				     				    
+					}catch(FormFieldValidationException e){
+						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+					}
+					return new ResponseEntity<>(HttpStatus.OK);
+			    }	
+				
+				
+				 // ucitavanje forme gde urednik pregleda pdf, nakon sto je potvrdio da je rad tematski prihvatljiv
+				 @GetMapping(path = "/sledeciTaskAutorKorekcija/{processId}", produces = "application/json")
+				    public @ResponseBody FormFieldsDto sledeciTaskAutorKorekcija(@PathVariable String processId) {
+
+						List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+						List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+						
+						if(tasks.size()==0){
+							System.out.println("Prazna lista, nema vise taskova");
+						}
+						for(Task T: tasks)
+						{
+							System.out.println("Dodaje task "+T.getName());
+							taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+						}
+						
+						Task nextTask = tasks.get(0);
+						
+						TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+						List<FormField> properties = tfd.getFormFields();
+						
+						/*
+						for(FormField field: properties)
+						{
+							System.out.println("Nasao sam polje!");
+							System.out.println(field.getDefaultValue().toString());
+						}
+						*/
+						
+				        return new FormFieldsDto(nextTask.getId(), processId, properties);
+				    }	
+				 
+				 	// urednik nakon sto pregleda pdf i klikne na submit
+					@PostMapping(path = "/sacuvajKorekcijaAutorSaPdf/{taskId}", produces = "application/json")
+				    public @ResponseBody ResponseEntity sacuvajKorekcijaAutorSaPdf(@RequestBody FormSubmissionWithFileDto dto, @PathVariable String taskId) throws IOException {
+						HashMap<String, Object> map = this.mapListToDto(dto.getForm());
+						Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+						String processInstanceId = task.getProcessInstanceId();
+						
+						runtimeService.setVariable(processInstanceId, "autorNewRad", dto.getForm()); 
+						formService.submitTaskForm(taskId, map);
+						
+						BASE64Decoder decoder = new BASE64Decoder();
+						byte[] decodedBytes = decoder.decodeBuffer(dto.getFile());
+
+						File file = new File("pdf/" + dto.getFileName());
+						FileOutputStream fop = new FileOutputStream(file);
+
+						fop.write(decodedBytes);
+						fop.flush();
+						fop.close();
+						
+				        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+				    }				
 
 }

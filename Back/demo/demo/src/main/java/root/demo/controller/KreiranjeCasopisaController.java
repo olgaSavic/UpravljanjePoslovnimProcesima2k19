@@ -63,14 +63,6 @@ public class KreiranjeCasopisaController {
 
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("kreiranjeCasopisa");
 		
-		/*
-		Korisnik us=(Korisnik) request.getAttribute("logged");
-        if(us!=null){
-        	us.setTip("UREDNIK");
-        	korisnikRepository.save(us);
-        }
-        */
-
 		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).list().get(0);
 		task.setAssignee("urednik");
 		taskService.saveTask(task);
