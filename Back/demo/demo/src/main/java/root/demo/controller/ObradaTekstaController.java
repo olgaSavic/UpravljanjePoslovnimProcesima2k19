@@ -325,9 +325,11 @@ public class ObradaTekstaController
 	
 	@PostMapping(path = "/sacuvajRadSaPdf/{taskId}", produces = "application/json")
     public @ResponseBody ResponseEntity sacuvajRadSaPdf(@RequestBody FormSubmissionWithFileDto dto, @PathVariable String taskId) throws IOException {
+		System.out.println("Usao u sacuvaj rad sa pdf!");
 		HashMap<String, Object> map = this.mapListToDto(dto.getForm());
 		Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
 		String processInstanceId = task.getProcessInstanceId();
+		
 		runtimeService.setVariable(processInstanceId, "infoRad", dto.getForm()); 
 		formService.submitTaskForm(taskId, map);
 		

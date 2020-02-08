@@ -47,17 +47,8 @@ public class AACuvanjeRadaService implements JavaDelegate
 
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
-		List<FormSubmissionWithFileDto> infoRad = (List<FormSubmissionWithFileDto>)execution.getVariable("infoRad");
+		List<FormSubmissonDTO> infoRad = (List<FormSubmissonDTO>)execution.getVariable("infoRad");
 		List<FormSubmissonDTO> izabranCasopis = (List<FormSubmissonDTO>)execution.getVariable("izabranCasopis");
-		
-		List<FormSubmissonDTO> newInfoRad = new ArrayList<FormSubmissonDTO>();
-		for (FormSubmissionWithFileDto fs: infoRad)
-		{
-			for (FormSubmissonDTO fs2: fs.getForm())
-			{
-				newInfoRad.add(fs2);
-			}
-		}
 			
 		 Casopis casopis = new Casopis();
 		 
@@ -89,7 +80,7 @@ public class AACuvanjeRadaService implements JavaDelegate
 	      Rad rad = new Rad();
 	      rad.setCasopis(casopis); // postavim polje rada casopis na izabran casopis
 	      
-	      for (FormSubmissonDTO formField : newInfoRad) 
+	      for (FormSubmissonDTO formField : infoRad) 
 	      {
 			
 			if(formField.getFieldId().equals("naslov")) {
@@ -130,6 +121,7 @@ public class AACuvanjeRadaService implements JavaDelegate
 			
 			
 	      }
+	    
 	      
 	      radRepository.save(rad); 
 	      

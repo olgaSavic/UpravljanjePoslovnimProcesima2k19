@@ -20,6 +20,8 @@ export class AUnosKoautoraComponent implements OnInit {
   private enumValues = [];
   private tasks = [];
 
+  private dalje: any ;
+
   private naucneOblasti = [];
 
   constructor(private userService : UserService,
@@ -65,6 +67,11 @@ export class AUnosKoautoraComponent implements OnInit {
       console.log(property);
       console.log(value[property]);
       o.push({fieldId : property, fieldValue : value[property]});
+
+      if (property == 'dodatniKoautor')
+      {
+        this.dalje = value[property];
+      }
     }
 
 
@@ -75,8 +82,15 @@ export class AUnosKoautoraComponent implements OnInit {
       res => {
         console.log(res)
 
-        alert("Uspesno ste uneli koautore u rad!");
-        this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
+        alert("Uspesno ste uneli koautora u rad!");
+
+        if (this.dalje == false) { // zavrsen je unos koautora
+          this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
+        }
+        else {
+          location.reload();
+        }
+
 
       },
       err => {

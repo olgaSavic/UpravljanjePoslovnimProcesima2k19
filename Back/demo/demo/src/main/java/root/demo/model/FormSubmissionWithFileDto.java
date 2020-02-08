@@ -1,10 +1,8 @@
 package root.demo.model;
 
 import java.util.List;
+import root.demo.model.FormSubmissonDTO;
 
-import lombok.Data;
-
-@Data
 public class FormSubmissionWithFileDto {
 
 	private List<FormSubmissonDTO> form;

@@ -97,7 +97,6 @@
               <camunda:property id="type" value="file" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="brojKoautora" label="Broj koautora:" type="long" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1h5pv00</bpmn:incoming>
@@ -115,9 +114,11 @@
           <camunda:formField id="email" label="Email adresa:" type="string" />
           <camunda:formField id="grad" label="Grad" type="string" />
           <camunda:formField id="drzava" label="Drzava:" type="string" />
+          <camunda:formField id="dodatniKoautor" label="Da li zelite da unesete jos koautora?" type="boolean" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1xk6kf6</bpmn:incoming>
+      <bpmn:incoming>hocuJosKoautora</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1tzf62y</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1tzf62y" sourceRef="unosKoautora" targetRef="cuvanjeKoautora" />
@@ -127,7 +128,7 @@
     <bpmn:sequenceFlow id="SequenceFlow_1bruu8v" sourceRef="slanjeEmailNot" targetRef="obradaRada" />
     <bpmn:serviceTask id="slanjeEmailNot" name="Slanje email notifikacija autoru i glavnom uredniku" camunda:class="root.demo.services.AASlanjeMejlaAGUService">
       <bpmn:incoming>korak4sePonavlja</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_115yue2</bpmn:incoming>
+      <bpmn:incoming>krajKoautori</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1bruu8v</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0oy33na" sourceRef="obradaRada" targetRef="ExclusiveGateway_1n80a9d" />
@@ -776,7 +777,18 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1chzdxe" sourceRef="potvrdaNastavak" targetRef="proveraUlogovan" />
     <bpmn:sequenceFlow id="SequenceFlow_0spiidn" sourceRef="registracija" targetRef="potvrdaNastavak" />
-    <bpmn:sequenceFlow id="SequenceFlow_115yue2" sourceRef="cuvanjeKoautora" targetRef="slanjeEmailNot" />
+    <bpmn:sequenceFlow id="SequenceFlow_115yue2" sourceRef="cuvanjeKoautora" targetRef="ExclusiveGateway_0wpvb1r" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0wpvb1r">
+      <bpmn:incoming>SequenceFlow_115yue2</bpmn:incoming>
+      <bpmn:outgoing>krajKoautori</bpmn:outgoing>
+      <bpmn:outgoing>hocuJosKoautora</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="krajKoautori" name="krajKoautori" sourceRef="ExclusiveGateway_0wpvb1r" targetRef="slanjeEmailNot">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dodatniKoautor == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="hocuJosKoautora" name="hocuJosKoautora" sourceRef="ExclusiveGateway_0wpvb1r" targetRef="unosKoautora">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${dodatniKoautor == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="obrada_teksta_proces">
@@ -877,7 +889,7 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1tzf62y_di" bpmnElement="SequenceFlow_1tzf62y">
         <di:waypoint x="1910" y="760" />
-        <di:waypoint x="1960" y="760" />
+        <di:waypoint x="1950" y="760" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_1crbqwg_di" bpmnElement="krajTematski">
         <dc:Bounds x="2962" y="742" width="36" height="36" />
@@ -886,11 +898,11 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1bruu8v_di" bpmnElement="SequenceFlow_1bruu8v">
-        <di:waypoint x="2290" y="760" />
+        <di:waypoint x="2310" y="760" />
         <di:waypoint x="2430" y="760" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0ahxkbz_di" bpmnElement="slanjeEmailNot">
-        <dc:Bounds x="2190" y="720" width="100" height="80" />
+        <dc:Bounds x="2210" y="720" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0oy33na_di" bpmnElement="SequenceFlow_0oy33na">
         <di:waypoint x="2530" y="760" />
@@ -980,10 +992,10 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmndi:BPMNEdge id="SequenceFlow_05ptah4_di" bpmnElement="korak4sePonavlja">
         <di:waypoint x="3870" y="210" />
         <di:waypoint x="3870" y="90" />
-        <di:waypoint x="2240" y="80" />
-        <di:waypoint x="2240" y="720" />
+        <di:waypoint x="2260" y="80" />
+        <di:waypoint x="2260" y="720" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3019" y="67" width="75" height="40" />
+          <dc:Bounds x="3029" y="67" width="75" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="BoundaryEvent_0fdkvp7_di" bpmnElement="satic1">
@@ -1574,7 +1586,7 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
         <dc:Bounds x="1650" y="720" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_1rxuv3x_di" bpmnElement="cuvanjeKoautora">
-        <dc:Bounds x="1960" y="720" width="100" height="80" />
+        <dc:Bounds x="1950" y="720" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_06r9um8_di" bpmnElement="potvrdaNastavak">
         <dc:Bounds x="400" y="420" width="100" height="80" />
@@ -1591,8 +1603,27 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
         <di:waypoint x="400" y="460" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_115yue2_di" bpmnElement="SequenceFlow_115yue2">
-        <di:waypoint x="2060" y="760" />
-        <di:waypoint x="2190" y="760" />
+        <di:waypoint x="2050" y="760" />
+        <di:waypoint x="2075" y="760" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0wpvb1r_di" bpmnElement="ExclusiveGateway_0wpvb1r" isMarkerVisible="true">
+        <dc:Bounds x="2075" y="735" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rm65nj_di" bpmnElement="krajKoautori">
+        <di:waypoint x="2125" y="760" />
+        <di:waypoint x="2210" y="760" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2138" y="742" width="60" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_17y7ayf_di" bpmnElement="hocuJosKoautora">
+        <di:waypoint x="2100" y="785" />
+        <di:waypoint x="2100" y="880" />
+        <di:waypoint x="1860" y="880" />
+        <di:waypoint x="1860" y="800" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1937" y="862" width="86" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

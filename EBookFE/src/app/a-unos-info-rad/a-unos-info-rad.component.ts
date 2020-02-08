@@ -41,9 +41,15 @@ export class AUnosInfoRadComponent implements OnInit {
     x.subscribe(
       res => {
         console.log(res);
-        //this.categories = res;
         this.formFieldsDto = res;
         this.formFields = res.formFields;
+        this.formFields.forEach( (field) =>{
+
+          if( field.type.name=='enum'){
+            this.enumValues = Object.keys(field.type.values);
+          }
+        });
+
         console.log(this.formFields);
 
         this.obradaService.getNOCasopis().subscribe(
@@ -53,12 +59,7 @@ export class AUnosInfoRadComponent implements OnInit {
             this.naucneOblasti = pom;
           }
         );
-        this.formFields.forEach( (field) =>{
 
-          if( field.type.name=='enum'){
-            this.enumValues = Object.keys(field.type.values);
-          }
-        });
       },
       err => {
         console.log("Error occured");
@@ -74,19 +75,26 @@ export class AUnosInfoRadComponent implements OnInit {
     console.log(value);
     let o = new Array();
 
-    for (const property in value) {
+    for (var property in value) {
       if(property.toString() == "pdf") {
         value[property] = this.fileName;
       }
-      o.push({fieldId : property, fieldValue : value[property]});
+      for (const property in value) {
 
+        if (property != 'naucnaOblastL') {
+          o.push({fieldId : property, fieldValue : value[property]});
+        } else {
+          o.push({fieldId : property, categories : value[property]});
+
+        }
+        console.log('niz za slanje izgleda');
+        console.log(o);
+      }
       console.log(o);
     }
 
-    console.log(o);
     let y = new FormSubmissionWithFileDto(o, this.fileField.toString(), this.fileName.toString());
 
-    //let x = this.obradaService.form(o, this.formFieldsDto.taskId);
     let x = this.obradaService.sacuvajRadSaPdf(y, this.formFieldsDto.taskId);
 
     x.subscribe(
