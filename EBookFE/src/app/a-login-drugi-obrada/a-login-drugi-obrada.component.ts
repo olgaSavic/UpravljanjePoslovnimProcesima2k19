@@ -1,16 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import {FormControl, FormGroup, Validators, FormBuilder, NgForm, AbstractControl} from '@angular/forms';
-import {ActivatedRoute, Router} from '@angular/router';
-import {KorisnikService} from '../services/korisnik/korisnik.service';
-import {Korisnik} from '../model/Korisnik';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {KorisnikModel} from '../model/Korisnik.model';
+import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../services/auth/auth.service';
+import {KorisnikService} from '../services/korisnik/korisnik.service';
+
 @Component({
-  selector: 'app-a-login-obrada',
-  templateUrl: './a-login-obrada.component.html',
-  styleUrls: ['./a-login-obrada.component.css']
+  selector: 'app-a-login-drugi-obrada',
+  templateUrl: './a-login-drugi-obrada.component.html',
+  styleUrls: ['./a-login-drugi-obrada.component.css']
 })
-export class ALoginObradaComponent implements OnInit {
+export class ALoginDrugiObradaComponent implements OnInit {
+
 
   loginForm = this.formBuilder.group({username: ['', Validators.required],
     password: ['', [Validators.required,
@@ -55,14 +56,7 @@ export class ALoginObradaComponent implements OnInit {
               localStorage.setItem("ROLE", data.tip);
               localStorage.setItem("USERNAME", data.username);
 
-              if (data.tip == 'AUTOR') {
-                this.router.navigateByUrl('potvrdaNastavak/' + this.processInstance);
-              }
-              else if (data.tip == 'UREDNIK') {
-                this.router.navigateByUrl('homepage/' + this.processInstance);
-              }
-
-
+              this.router.navigateByUrl('homepage/' + this.processInstance);
 
             }
           )
@@ -72,33 +66,6 @@ export class ALoginObradaComponent implements OnInit {
 
   }
 
-
-
-  login2(submittedForm: FormGroup) {
-
-    const processInstanceId = this.route.snapshot.params.processInstanceId ;
-    this.processInstance = processInstanceId;
-
-    const username = submittedForm.get('username').value;
-    const password = submittedForm.get('password').value;
-
-    this.sendUser.username = username;
-    this.sendUser.password = password;
-
-    let x = this.userService.loginUser(this.sendUser);
-    x.subscribe(
-      res => {
-        console.log(res);
-        alert('Uspesno ste se ulogovali!');
-        sessionStorage.setItem('loggedUser', JSON.stringify(res));
-        this.router.navigateByUrl('izborCasopisa/' + this.processInstance);
-      },
-      err => {
-        alert('Uneli ste neispravno korisnicko ime ili lozinku!');
-        location.reload();
-      }
-    );
-  }
 
 
 }

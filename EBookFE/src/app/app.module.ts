@@ -44,6 +44,12 @@ import {AuthService} from './services/auth/auth.service';
 import {AuthInterceptor} from './auth-interceptor/auth-interceptor';
 import { AUnosKoautoraComponent } from './a-unos-koautora/a-unos-koautora.component';
 import { APotvrdaNastavakComponent } from './a-potvrda-nastavak/a-potvrda-nastavak.component';
+import { APregledRadaGlUrednikComponent } from './a-pregled-rada-gl-urednik/a-pregled-rada-gl-urednik.component';
+import { AIzmenaRadaAutorComponent } from './a-izmena-rada-autor/a-izmena-rada-autor.component';
+import { ALoginDrugiObradaComponent } from './a-login-drugi-obrada/a-login-drugi-obrada.component';
+import {AHomepageListaTaskovaComponent} from './a-homepage-lista-taskova/a-homepage-lista-taskova.component';
+import { AHomepageComponent } from './a-homepage/a-homepage.component';
+import { PleaseWorkComponent } from './please-work/please-work.component';
 
 
 const ChildRoutes =
@@ -92,6 +98,13 @@ const Routes = [
     KrajLoginComponent,
     AUnosKoautoraComponent,
     APotvrdaNastavakComponent,
+    APregledRadaGlUrednikComponent,
+    AIzmenaRadaAutorComponent,
+    ALoginDrugiObradaComponent,
+    AHomepageListaTaskovaComponent,
+    AHomepageComponent,
+    PleaseWorkComponent
+
   ],
   imports: [
     BrowserModule,

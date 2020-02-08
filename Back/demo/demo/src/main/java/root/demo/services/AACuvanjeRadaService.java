@@ -1,6 +1,7 @@
 package root.demo.services;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.camunda.bpm.engine.IdentityService;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import root.demo.model.Casopis;
+import root.demo.model.FormSubmissionWithFileDto;
 import root.demo.model.FormSubmissonDTO;
 import root.demo.model.Korisnik;
 import root.demo.model.NaucnaOblast;
@@ -45,8 +47,17 @@ public class AACuvanjeRadaService implements JavaDelegate
 
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
-		List<FormSubmissonDTO> infoRad = (List<FormSubmissonDTO>)execution.getVariable("infoRad");
+		List<FormSubmissionWithFileDto> infoRad = (List<FormSubmissionWithFileDto>)execution.getVariable("infoRad");
 		List<FormSubmissonDTO> izabranCasopis = (List<FormSubmissonDTO>)execution.getVariable("izabranCasopis");
+		
+		List<FormSubmissonDTO> newInfoRad = new ArrayList<FormSubmissonDTO>();
+		for (FormSubmissionWithFileDto fs: infoRad)
+		{
+			for (FormSubmissonDTO fs2: fs.getForm())
+			{
+				newInfoRad.add(fs2);
+			}
+		}
 			
 		 Casopis casopis = new Casopis();
 		 
@@ -78,7 +89,7 @@ public class AACuvanjeRadaService implements JavaDelegate
 	      Rad rad = new Rad();
 	      rad.setCasopis(casopis); // postavim polje rada casopis na izabran casopis
 	      
-	      for (FormSubmissonDTO formField : infoRad) 
+	      for (FormSubmissonDTO formField : newInfoRad) 
 	      {
 			
 			if(formField.getFieldId().equals("naslov")) {

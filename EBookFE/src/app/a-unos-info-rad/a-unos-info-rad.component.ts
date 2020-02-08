@@ -3,6 +3,7 @@ import {UserService} from '../services/users/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {RepositoryService} from '../services/repository/repository.service';
 import {ObradaService} from '../services/obrada/obrada.service';
+import {FormSubmissionWithFileDto} from '../model/FormSubmissionWithFileDto';
 
 @Component({
   selector: 'app-a-unos-info-rad',
@@ -11,6 +12,7 @@ import {ObradaService} from '../services/obrada/obrada.service';
 })
 export class AUnosInfoRadComponent implements OnInit {
 
+  private formSubmissionWithFile  = null;
   private repeated_password = "";
   private categories = [];
   private formFieldsDto = null;
@@ -19,6 +21,9 @@ export class AUnosInfoRadComponent implements OnInit {
   private processInstance = "";
   private enumValues = [];
   private tasks = [];
+
+  private fileField = null;
+  private fileName = null;
 
   private naucneOblasti = [];
 
@@ -70,18 +75,19 @@ export class AUnosInfoRadComponent implements OnInit {
     let o = new Array();
 
     for (const property in value) {
-
-      if (property != 'naucnaOblastL') {
-        o.push({fieldId : property, fieldValue : value[property]});
-      } else {
-        o.push({fieldId : property, categories : value[property]});
-
+      if(property.toString() == "pdf") {
+        value[property] = this.fileName;
       }
+      o.push({fieldId : property, fieldValue : value[property]});
+
       console.log(o);
     }
 
     console.log(o);
-    let x = this.obradaService.sacuvajRad(o, this.formFieldsDto.taskId);
+    let y = new FormSubmissionWithFileDto(o, this.fileField.toString(), this.fileName.toString());
+
+    //let x = this.obradaService.form(o, this.formFieldsDto.taskId);
+    let x = this.obradaService.sacuvajRadSaPdf(y, this.formFieldsDto.taskId);
 
     x.subscribe(
       res => {
@@ -92,10 +98,29 @@ export class AUnosInfoRadComponent implements OnInit {
 
       },
       err => {
-        console.log("Doslo je do greske, pa registracija nije izvrsena!");
+        console.log("Doslo je do greske, pa dodavanje novog rada nije izvrseno!");
       }
     );
   }
+
+  fileChoserListener(files: FileList, field)
+  {
+    let fileToUpload = files.item(0);
+    field.fileName = files.item(0).name;
+    this.fileName = files.item(0).name;
+
+    let fileReader = new FileReader();
+
+    fileReader.onload = (e) => {
+
+      field.value = fileReader.result;
+      this.fileField = fileReader.result;
+      console.log(fileReader.result);
+    }
+
+    fileReader.readAsDataURL(files.item(0))
+  }
+
 
 
 }

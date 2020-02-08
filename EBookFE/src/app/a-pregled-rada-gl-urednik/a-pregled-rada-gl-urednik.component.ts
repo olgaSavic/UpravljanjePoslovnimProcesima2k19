@@ -5,11 +5,12 @@ import {RepositoryService} from '../services/repository/repository.service';
 import {ObradaService} from '../services/obrada/obrada.service';
 
 @Component({
-  selector: 'app-a-unos-koautora',
-  templateUrl: './a-unos-koautora.component.html',
-  styleUrls: ['./a-unos-koautora.component.css']
+  selector: 'app-a-pregled-rada-gl-urednik',
+  templateUrl: './a-pregled-rada-gl-urednik.component.html',
+  styleUrls: ['./a-pregled-rada-gl-urednik.component.css']
 })
-export class AUnosKoautoraComponent implements OnInit {
+export class APregledRadaGlUrednikComponent implements OnInit {
+
 
   private repeated_password = "";
   private categories = [];
@@ -17,10 +18,12 @@ export class AUnosKoautoraComponent implements OnInit {
   private formFields = [];
   private choosen_category = -1;
   private processInstance = "";
+
   private enumValues = [];
   private tasks = [];
 
   private naucneOblasti = [];
+  private task = "";
 
   constructor(private userService : UserService,
               private route: ActivatedRoute,
@@ -31,7 +34,10 @@ export class AUnosKoautoraComponent implements OnInit {
     const processInstanceId = this.route.snapshot.params.processInstanceId ;
     this.processInstance = processInstanceId;
 
-    let x = obradaService.sledeciTaskKoautor(processInstanceId);
+    const taskId = this.route.snapshot.params.taskId ;
+    this.task = taskId;
+
+    let x = obradaService.sledeciTaskPregledUrednik(processInstanceId);
 
     x.subscribe(
       res => {
@@ -69,18 +75,18 @@ export class AUnosKoautoraComponent implements OnInit {
 
 
     console.log(o);
-    let x = this.obradaService.sacuvajKoautore(o, this.formFieldsDto.taskId);
+    let x = this.obradaService.sacuvajPregledUrednika(o, this.formFieldsDto.taskId);
 
     x.subscribe(
       res => {
         console.log(res)
 
-        alert("Uspesno ste uneli koautore u rad!");
-        this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
+        alert("Uspesno ste pregledali rad!");
+        this.router.navigateByUrl('loginObrada/' + this.processInstance);
 
       },
       err => {
-        console.log("Doslo je do greske, pa koautor nije dodat u rad!");
+        console.log("Doslo je do greske, pa rad nije uspesno pregledan!");
       }
     );
   }

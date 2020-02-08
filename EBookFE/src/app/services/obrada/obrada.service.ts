@@ -59,6 +59,10 @@ export class ObradaService {
     return this.httpClient.post('http://localhost:8080/obrada/sacuvajRad/'.concat(taskId), rad) as Observable<any>;
   }
 
+  sacuvajRadSaPdf(y, taskId) {
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajRadSaPdf/'.concat(taskId), y) as Observable<any>;
+  }
+
   getNOCasopis() {
     return this.httpClient.get('http://localhost:8080/obrada/getNOCasopis') as Observable<any>;
   }
@@ -73,7 +77,33 @@ export class ObradaService {
     return this.httpClient.post('http://localhost:8080/obrada/sacuvajKoautore/'.concat(taskId), rad) as Observable<any>;
   }
 
+  // -------------------------------------------------
+  getTasksUser(processId: string, username: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/getTasksUser/'.concat(processId).concat('/').concat(username)) as Observable<any>;
 
+  }
+
+  completeTask(processId: string, task) {
+    console.log(task.name);
+    console.log(task.taskId);
+    if (task.name === 'Obrada rada') // ukoliko se nalazi na urednikovom tasku
+    {
+      window.location.href = 'pregledRadaUrednik/' + processId + '/' + task.taskId;
+    } else { // ukoliko se nalazi na autorovom tasku
+      window.location.href = 'izmenaRadaAutor/' + processId + '/' + task.taskId;
+
+    }
+  }
+
+  // ---------------------------------------------------
+  sledeciTaskPregledUrednik(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskPregledUrednik/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajPregledUrednika(rad, taskId) {
+    console.log(rad);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajPregledUrednika/'.concat(taskId), rad) as Observable<any>;
+  }
 
 
 

@@ -22,6 +22,12 @@ import {AIzborCasopisaComponent} from './a-izbor-casopisa/a-izbor-casopisa.compo
 import {AUnosInfoRadComponent} from './a-unos-info-rad/a-unos-info-rad.component';
 import {AUnosKoautoraComponent} from './a-unos-koautora/a-unos-koautora.component';
 import {APotvrdaNastavakComponent} from './a-potvrda-nastavak/a-potvrda-nastavak.component';
+import {APregledRadaGlUrednikComponent} from './a-pregled-rada-gl-urednik/a-pregled-rada-gl-urednik.component';
+import {AHomepageListaTaskovaComponent} from './a-homepage-lista-taskova/a-homepage-lista-taskova.component';
+import {AIzmenaRadaAutorComponent} from './a-izmena-rada-autor/a-izmena-rada-autor.component';
+import {ALoginDrugiObradaComponent} from './a-login-drugi-obrada/a-login-drugi-obrada.component';
+import {AHomepageComponent} from './a-homepage/a-homepage.component';
+import {PleaseWorkComponent} from './please-work/please-work.component';
 
 const routes: Routes = [
 
@@ -49,6 +55,14 @@ const routes: Routes = [
   { path: 'izborCasopisa/:processInstanceId', component: AIzborCasopisaComponent },
   { path: 'unosInfoRad/:processInstanceId', component: AUnosInfoRadComponent },
   { path: 'unosKoautora/:processInstanceId', component: AUnosKoautoraComponent },
+  // SREDITI PARAMETAR U URL
+  { path: 'pregledRadaUrednik/:processInstanceId/:taskId', component: APregledRadaGlUrednikComponent },
+  { path: 'izmenaRadaAutor/:processInstanceId/:taskId', component: AIzmenaRadaAutorComponent },
+  { path: 'homepage/:processInstanceId', component: AHomepageComponent },
+  { path: 'loginDrugiObrada/:processInstanceId', component: ALoginDrugiObradaComponent },
+  { path: 'taskovi/:processInstanceId', component: PleaseWorkComponent }
+
+
 
 
 

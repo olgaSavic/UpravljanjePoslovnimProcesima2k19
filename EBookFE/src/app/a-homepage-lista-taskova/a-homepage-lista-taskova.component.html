@@ -1,0 +1,9 @@
+<div>
+  <h2>Lista taskova:</h2>
+  <table>
+    <tr *ngFor="let task of tasks" > <td>{{task.title}}</td><td>{{task.assignee}}</td>
+      <td><button  (click)="complete(task)">Zapocnite Task</button></td>
+    </tr>
+
+  </table>
+</div>
