@@ -41,8 +41,9 @@ public class AAProveraUlogovanService implements JavaDelegate {
 		}
 		else
 		{
-			System.out.println("Ulogovan je [provera ulogovan]: " + k.getUsername());
+			System.out.println("Ulogovan je [provera ulogovan -> postavljanje varijable]: " + k.getUsername());
 			execution.setVariable("rezUlogovan", true);
+			execution.setVariable("autor", k.getUsername());
 		}
 		
 	}

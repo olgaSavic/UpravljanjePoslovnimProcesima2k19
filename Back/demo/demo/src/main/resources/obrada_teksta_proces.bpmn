@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_06xlula" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="3.4.1">
   <bpmn:process id="obrada_teksta_proces" name="obrada_teksta_proces" isExecutable="true">
-    <bpmn:startEvent id="pocetak" camunda:initiator="autor">
+    <bpmn:startEvent id="pocetak" camunda:initiator="inicijator">
       <bpmn:outgoing>SequenceFlow_01m8304</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:userTask id="izborCasopisa" name="Izbor casopisa" camunda:assignee="${autor}">
@@ -728,7 +728,7 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmn:outgoing>SequenceFlow_0a2tg1d</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0qikxrg" sourceRef="imaNalog" targetRef="ExclusiveGateway_02x4oev" />
-    <bpmn:userTask id="imaNalog" name="Da li korisnik vec ima kreiran nalog?" camunda:assignee="${autor}">
+    <bpmn:userTask id="imaNalog" name="Da li korisnik vec ima kreiran nalog?" camunda:assignee="${inicijator}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="zelimReg" label="Nemam nalog, pa zelim da se registrujem:" type="boolean" />
@@ -762,7 +762,7 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmn:incoming>SequenceFlow_1tzf62y</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_115yue2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="potvrdaNastavak" name="Potvrdite da zelite da nastavite dalje:" camunda:assignee="${autor}">
+    <bpmn:userTask id="potvrdaNastavak" name="Potvrdite da zelite da nastavite dalje:" camunda:assignee="${inicijator}">
       <bpmn:incoming>imaNalogK</bpmn:incoming>
       <bpmn:incoming>SequenceFlow_0spiidn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1chzdxe</bpmn:outgoing>

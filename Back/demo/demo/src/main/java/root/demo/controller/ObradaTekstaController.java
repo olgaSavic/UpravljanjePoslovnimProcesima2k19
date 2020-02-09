@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import root.demo.model.FormSubmissionWithFileDto;
 import root.demo.model.Casopis;
 import root.demo.model.FormFieldsDto;
-
+import root.demo.model.FormSubmissionDto;
 import root.demo.model.FormSubmissonDTO;
 import root.demo.model.Korisnik;
 import root.demo.model.NaucnaOblastCasopis;
@@ -129,7 +129,7 @@ public class ObradaTekstaController
 		return map;
 	}
 	
-	// ucitavanje forme gde korisnik bira casopis
+	// ucitavanje forme gde korisnik potvrdjuje da zeli da nastavi dalje u proces
 		@GetMapping(path = "/potvrdaNastavak/{processId}", produces = "application/json")
 	    public @ResponseBody FormFieldsDto potvrdaNastavak(@PathVariable String processId) {
 
@@ -146,14 +146,6 @@ public class ObradaTekstaController
 			}
 			
 			Task nextTask = tasks.get(0);
-			
-			/*
-			// ukoliko mu nije dodeljen Asignee, ili ako je dodeljen neko ko nije demo
-			if(nextTask.getAssignee()==null || !nextTask.getAssignee().equals("demo") || !nextTask.getAssignee().equals("urednik") || !nextTask.getAssignee().equals("recenzent")){
-				nextTask.setAssignee("autor");
-				taskService.saveTask(nextTask);
-			}
-			*/
 			
 			TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 			List<FormField> properties = tfd.getFormFields();
@@ -192,6 +184,10 @@ public class ObradaTekstaController
 			try{
 				runtimeService.setVariable(processInstanceId, "potvrdaNastavak", formData);
 				formService.submitTaskForm(taskId, map);
+				
+				Korisnik autor = getCurrentUser();
+				System.out.println("Postavljen je autor nakon potvrde nastavka na: " + autor.getUsername());
+				runtimeService.setVariable(processInstanceId, "autor", autor.getUsername());
 		     				    
 			}catch(FormFieldValidationException e){
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -271,10 +267,6 @@ public class ObradaTekstaController
 		try{
 			System.out.println("Postavljen je glavniUrednikVar na: " + casopis.getGlavniUrednik().getUsername());
 			runtimeService.setVariable(processInstanceId, "glavniUrednikVar", casopis.getGlavniUrednik().getUsername());
-			
-			Korisnik autor = getCurrentUser();
-			System.out.println("Postavljen je autorVar na: " + autor.getUsername());
-			runtimeService.setVariable(processInstanceId, "autorVar", autor.getUsername());
 			
 			runtimeService.setVariable(processInstanceId, "izabranCasopis", formData);
 			formService.submitTaskForm(taskId, map);
@@ -461,7 +453,7 @@ public class ObradaTekstaController
 		     // KOMENTAR: mozda promeniti na trenutno ulogovanog, jer ima vise autora
 		     else if (user.getTip().equals("AUTOR"))// kupi taskove od autora
 		     {
-		        tasks.addAll(taskService.createTaskQuery().processDefinitionKey("obrada_teksta_proces").taskAssignee("autor").list());
+		        tasks.addAll(taskService.createTaskQuery().processDefinitionKey("obrada_teksta_proces").taskAssignee(user.getUsername()).list());
 		     }
 		     for (Task task : tasks) {
 		    	 TaskDto t = new TaskDto(task.getId(), task.getName(), task.getAssignee());
@@ -617,6 +609,47 @@ public class ObradaTekstaController
 				    }
 
 				 
+			@RequestMapping(value="/getRecenzentiCasopis/{processId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
+			public ResponseEntity<List<Korisnik>> getRecenzentiCasopis(@PathVariable String processId)
+			{		
+
+				List<Casopis> casopisi = casopisRepository.findAll();
+				List<Korisnik> sviKorisnici = korisnikRepository.findAll();
+				List<Korisnik> recenzenti = new ArrayList<Korisnik>();
 				
+				List<FormSubmissonDTO> izabranCasopisForm = (List<FormSubmissonDTO>)runtimeService.getVariable(processId, "izabranCasopis");
+				Casopis casopis = new Casopis();
+				 
+				 for(FormSubmissonDTO item: izabranCasopisForm)
+				  {
+					  String fieldId=item.getFieldId();
+					  
+					 if(fieldId.equals("casopisiL")){
+						  
+						  List<Casopis> allCasopisi = casopisRepository.findAll();
+						  for(Casopis c : allCasopisi){
+							  for(String selectedEd:item.getCategories())
+							  {
+								  String idS= c.getId().toString();
+								  
+								  if(idS.equals(selectedEd)){
+									  System.out.println(c.getNaziv());
+									  casopis = casopisRepository.findOneByIssn(c.getIssn());
+									  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
+									  break ;
+									  
+								  }
+							  }
+						  }
+					 }
+					 
+					}
+				for (Korisnik k: casopis.getRecenzentiCasopis())
+				{
+					recenzenti.add(k);
+				}
+				System.out.println("Recenzenata ima: " + recenzenti.size());
+				return new ResponseEntity<List<Korisnik>>(recenzenti, HttpStatus.OK);
+			}				
 
 }

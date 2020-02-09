@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import root.demo.model.Casopis;
 import root.demo.model.FormSubmissionDto;
 import root.demo.model.FormSubmissonDTO;
-import root.demo.model.IzabranCasopis;
 import root.demo.model.Korisnik;
 import root.demo.model.TipKorisnika;
 import root.demo.repository.CasopisRepository;

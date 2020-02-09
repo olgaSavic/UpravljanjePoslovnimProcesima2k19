@@ -38,6 +38,12 @@ public class Korisnik {
 	@ManyToMany
 	private Set<Casopis> casopisiUred = new HashSet<Casopis>();
 	
+	@ManyToMany
+	private Set<NaucnaOblastCasopis> noRec = new HashSet<NaucnaOblastCasopis>();
+	
+	@ManyToMany
+	private Set<NaucnaOblastCasopis> noUred = new HashSet<NaucnaOblastCasopis>();
+	
 	public Korisnik() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -176,6 +182,23 @@ public class Korisnik {
 	public void setCasopisiUred(Set<Casopis> casopisiUred) {
 		this.casopisiUred = casopisiUred;
 	}
+
+	public Set<NaucnaOblastCasopis> getNoRec() {
+		return noRec;
+	}
+
+	public void setNoRec(Set<NaucnaOblastCasopis> noRec) {
+		this.noRec = noRec;
+	}
+
+	public Set<NaucnaOblastCasopis> getNoUred() {
+		return noUred;
+	}
+
+	public void setNoUred(Set<NaucnaOblastCasopis> noUred) {
+		this.noUred = noUred;
+	}
+	
 	
 
 }

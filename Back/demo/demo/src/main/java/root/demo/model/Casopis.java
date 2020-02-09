@@ -44,11 +44,13 @@ public class Casopis {
 	private boolean aktivan;
 	
 	@ManyToMany(cascade = {CascadeType.ALL})
-	@JoinTable(name = "Casopis_NO", joinColumns = { @JoinColumn(name = "casopis_id") }, inverseJoinColumns = { @JoinColumn(name = "naucnaOblastCasopis_id") }
+	@JoinTable(name = "Casopis_NO", 
+	joinColumns = { @JoinColumn(name = "casopis_id") }, 
+	inverseJoinColumns = { @JoinColumn(name = "naucnaOblastCasopis_id") }
 	  )
 	private Set<NaucnaOblastCasopis> naucneOblasti = new HashSet<NaucnaOblastCasopis>();
 	
-	// lista recenzenata
+	// lista recenzenata za dati casopis
 	@ManyToMany(cascade = {CascadeType.ALL})
 	@JoinTable(
 	        name = "Casopis_Recenzent", 
@@ -57,7 +59,7 @@ public class Casopis {
 	  )
 	private Set<Korisnik> recenzentiCasopis = new HashSet<Korisnik>();
 	
-	// lista urednika
+	// lista urednika naucnih oblasti
 	@ManyToMany(cascade = {CascadeType.ALL})
 	@JoinTable(
 	        name = "Casopis_Urednik", 

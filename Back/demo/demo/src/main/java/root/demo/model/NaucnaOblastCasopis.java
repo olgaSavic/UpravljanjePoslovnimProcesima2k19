@@ -3,10 +3,13 @@ package root.demo.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
@@ -24,6 +27,23 @@ public class NaucnaOblastCasopis {
 	//@ManyToMany(mappedBy = "CasopisNO")
 	@ManyToMany
 	private Set<Casopis> casopisi = new HashSet<Casopis>();
+	
+	@ManyToMany(cascade = {CascadeType.ALL})
+	@JoinTable(
+	        name = "NOCas_Urednik", 
+	        joinColumns = { @JoinColumn(name = "no_id") }, 
+	        inverseJoinColumns = { @JoinColumn(name = "korisnik_id") }
+	  )
+	private Set<Korisnik> uredniciNO = new HashSet<Korisnik>();
+	
+	@ManyToMany(cascade = {CascadeType.ALL})
+	@JoinTable(
+	        name = "NOCas_Recenzent", 
+	        joinColumns = { @JoinColumn(name = "no_id") }, 
+	        inverseJoinColumns = { @JoinColumn(name = "korisnik_id") }
+	  )
+	private Set<Korisnik> recenzentiNO = new HashSet<Korisnik>();
+	
 	
 	public NaucnaOblastCasopis() {
 		super();
@@ -52,6 +72,20 @@ public class NaucnaOblastCasopis {
 	public void setCasopisi(Set<Casopis> casopisi) {
 		this.casopisi = casopisi;
 	}
+	public Set<Korisnik> getUredniciNO() {
+		return uredniciNO;
+	}
+	public void setUredniciNO(Set<Korisnik> uredniciNO) {
+		this.uredniciNO = uredniciNO;
+	}
+	public Set<Korisnik> getRecenzentiNO() {
+		return recenzentiNO;
+	}
+	public void setRecenzentiNO(Set<Korisnik> recenzentiNO) {
+		this.recenzentiNO = recenzentiNO;
+	}
+	
+	
 	
 	
 	
