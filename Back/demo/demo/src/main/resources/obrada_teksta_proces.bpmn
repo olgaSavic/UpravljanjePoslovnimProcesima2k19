@@ -249,6 +249,11 @@
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="recenzentiL" label="Izaberite minimum dva recenzenta:" type="enum" />
+          <camunda:formField id="rokIspravke" label="Rok ispravke rada:" type="enum">
+            <camunda:value id="PT1M" name="PT1M" />
+            <camunda:value id="PT2M" name="PT2M" />
+            <camunda:value id="PT5M" name="PT5M" />
+          </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>postojiDvaRec</bpmn:incoming>
@@ -518,7 +523,6 @@
     </bpmn:sequenceFlow>
     <bpmn:callActivity id="registracija" name="Registracija korisnika - potproces" calledElement="registracija_proces">
       <bpmn:incoming>nemaNalog</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0spiidn</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:sequenceFlow id="nijeUlogovan" name="nijeUlogovan" sourceRef="ExclusiveGateway_16uwza8" targetRef="imaNalog">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${rezUlogovan == false}</bpmn:conditionExpression>
@@ -567,11 +571,9 @@
     </bpmn:serviceTask>
     <bpmn:userTask id="potvrdaNastavak" name="Potvrdite da zelite da nastavite dalje:" camunda:assignee="${inicijator}">
       <bpmn:incoming>imaNalogK</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_0spiidn</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1chzdxe</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:sequenceFlow id="SequenceFlow_1chzdxe" sourceRef="potvrdaNastavak" targetRef="proveraUlogovan" />
-    <bpmn:sequenceFlow id="SequenceFlow_0spiidn" sourceRef="registracija" targetRef="potvrdaNastavak" />
     <bpmn:sequenceFlow id="SequenceFlow_115yue2" sourceRef="cuvanjeKoautora" targetRef="ExclusiveGateway_0wpvb1r" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_0wpvb1r">
       <bpmn:incoming>SequenceFlow_115yue2</bpmn:incoming>
@@ -1213,11 +1215,6 @@
         <di:waypoint x="450" y="534" />
         <di:waypoint x="410" y="534" />
         <di:waypoint x="410" y="567" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0spiidn_di" bpmnElement="SequenceFlow_0spiidn">
-        <di:waypoint x="370" y="360" />
-        <di:waypoint x="370" y="460" />
-        <di:waypoint x="400" y="460" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_115yue2_di" bpmnElement="SequenceFlow_115yue2">
         <di:waypoint x="2050" y="760" />

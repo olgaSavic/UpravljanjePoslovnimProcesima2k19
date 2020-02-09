@@ -45,6 +45,7 @@ export class AZapocniObraduComponent implements OnInit {
             if (data != null) {
               this.router.navigateByUrl('izborCasopisa/' + this.processInstance);
             }
+            localStorage.setItem("PROCES_INSTANCE_ID", this.processInstance);
 
           }
         )

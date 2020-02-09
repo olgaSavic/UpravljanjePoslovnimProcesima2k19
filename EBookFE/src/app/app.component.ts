@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {ObradaService} from './services/obrada/obrada.service';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +8,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
+  constructor(private route: ActivatedRoute,
+              protected router: Router,
+              private obradaService: ObradaService) {
+
+  }
   title = 'app';
   private user = JSON.parse(localStorage.getItem('user'));
   private role = localStorage.getItem('role');
@@ -32,5 +40,13 @@ export class AppComponent {
     }else{
       return false;
     }
+  }
+
+  logout()
+  {
+    localStorage.removeItem("AGENT_JWT_TOKEN");
+    localStorage.removeItem("ROLE");
+    localStorage.removeItem("USERNAME");
+    this.router.navigateByUrl('')
   }
 }

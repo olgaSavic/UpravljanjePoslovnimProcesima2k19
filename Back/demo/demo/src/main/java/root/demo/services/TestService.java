@@ -10,6 +10,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.identity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import root.demo.model.FormSubmissionDto;
@@ -26,6 +27,8 @@ public class TestService implements JavaDelegate{
 	
 	@Autowired
 	KorisnikRepository korisnikRepository ;
+	
+	private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 	
 	@Override
 	public void execute(DelegateExecution execution) throws Exception {
@@ -46,8 +49,8 @@ public class TestService implements JavaDelegate{
 			if(formField.getFieldId().equals("password")) {
 				
 				String dobijenaSifra = formField.getFieldValue();
-				String hesovanaLozinka = encrypt(dobijenaSifra);
-				user.setPassword(formField.getFieldValue());
+				String hesovanaLozinka = encoder.encode(dobijenaSifra);
+				user.setPassword(hesovanaLozinka);
 				korisnik.setPassword(hesovanaLozinka);
 			}
 			if(formField.getFieldId().equals("email")) {
@@ -88,7 +91,7 @@ public class TestService implements JavaDelegate{
 			}
 			
 			korisnik.setAktivan(false);
-			korisnik.setTip("OBICAN");
+			korisnik.setTip("AUTOR");
 			
 			
 	      }

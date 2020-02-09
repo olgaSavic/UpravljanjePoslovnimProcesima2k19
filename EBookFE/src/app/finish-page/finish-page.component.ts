@@ -17,8 +17,6 @@ export class FinishPageComponent implements OnInit {
     const processInstanceId = this.route.snapshot.params.processInstanceId ;
     this.processInstance = processInstanceId;
 
-    this.router.navigateByUrl('login');
-
   }
 
 }

@@ -55,6 +55,7 @@ export class ALoginObradaComponent implements OnInit {
               localStorage.setItem("ROLE", data.tip);
               localStorage.setItem("USERNAME", data.username);
 
+
               if (data.tip == 'AUTOR') {
                 this.router.navigateByUrl('potvrdaNastavak/' + this.processInstance);
               }
