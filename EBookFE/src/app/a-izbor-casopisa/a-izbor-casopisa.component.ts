@@ -20,6 +20,7 @@ export class AIzborCasopisaComponent implements OnInit {
   private reviewers = [];
   private editors = [];
   private processInstance: any ;
+  private enumValues = [];
 
   private casopisi = [];
   // tslint:disable-next-line:max-line-length
@@ -40,6 +41,12 @@ export class AIzborCasopisaComponent implements OnInit {
         this.formFieldsDto = res;
         this.formFields = res.formFields;
         console.log(this.formFields);
+        this.formFields.forEach( (field) =>{
+
+          if( field.type.name=='enum'){
+            this.enumValues = Object.keys(field.type.values);
+          }
+        });
 
         this.obradaService.getAllCasopisi().subscribe(
           pom => {

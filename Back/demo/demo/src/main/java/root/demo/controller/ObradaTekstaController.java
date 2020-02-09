@@ -15,6 +15,7 @@ import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.form.FormField;
 import org.camunda.bpm.engine.form.TaskFormData;
 import org.camunda.bpm.engine.impl.cmd.GetDeploymentResourceNamesCmd;
+import org.camunda.bpm.engine.impl.form.type.EnumFormType;
 import org.camunda.bpm.engine.impl.form.validator.FormFieldValidationException;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.task.Task;
@@ -196,9 +197,8 @@ public class ObradaTekstaController
 	    }
 
 	
-	
-	
 	// ucitavanje forme gde korisnik bira casopis
+	// DINAMICKO UCITAVANJE CASOPISA		
 	@GetMapping(path = "/sledeciTaskIzbor/{processId}", produces = "application/json")
     public @ResponseBody FormFieldsDto sledeciTaskIzbor(@PathVariable String processId) {
 
@@ -220,6 +220,31 @@ public class ObradaTekstaController
 		TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 		List<FormField> properties = tfd.getFormFields();
 		
+		// dinamicko ucitavanje
+		List<Casopis> casopisi = casopisRepository.findAll();
+		for (FormField fp: properties)
+		{
+			if (fp.getId().equals("casopisiL"))
+			{
+				EnumFormType enumType = (EnumFormType) fp.getType();
+				enumType.getValues().clear();
+				String openAccess ;
+				for (Casopis cas: casopisi)
+				{
+					if (cas.isOpenAccess() == true)
+					{
+						openAccess = "open-access" ;
+					}
+					else
+					{
+						openAccess = "placena clanarina" ;
+					}
+					enumType.getValues().put(cas.getId().toString(), cas.getNaziv() + ", " + openAccess);
+				}
+				break ;
+			}
+		}
+		
         return new FormFieldsDto(nextTask.getId(), processId, properties);
     }
 	
@@ -234,7 +259,6 @@ public class ObradaTekstaController
 		Casopis casopis = new Casopis();
 		for(FormSubmissonDTO item: formData){
 			String fieldId = item.getFieldId();
-			
 			
 			if(fieldId.equals("casopisiL"))
 			{
@@ -297,6 +321,7 @@ public class ObradaTekstaController
 	}
 	
 	// korisnik unosi informacije o radu
+	// DINAMICKO UCITAVANJE NAUCNIH OBLASTI
 	@GetMapping(path = "/unosInfoRad/{processId}", produces = "application/json")
     public @ResponseBody FormFieldsDto unosInfoRad(@PathVariable String processId) {
 
@@ -316,6 +341,23 @@ public class ObradaTekstaController
 		
 		TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 		List<FormField> properties = tfd.getFormFields();
+		
+		// dinamicko ucitavanje
+		List<NaucnaOblastCasopis> no = noRepository.findAll();
+		for (FormField fp: properties)
+		{
+			if (fp.getId().equals("naucnaOblastL"))
+			{
+				EnumFormType enumType = (EnumFormType) fp.getType();
+				enumType.getValues().clear();
+				
+				for (NaucnaOblastCasopis oblast: no)
+				{
+					enumType.getValues().put(oblast.getId().toString(), oblast.getNazivNO());
+				}
+				break ;
+			}
+		}
 		
         return new FormFieldsDto(nextTask.getId(), processId, properties);
     }
@@ -409,29 +451,7 @@ public class ObradaTekstaController
 			
 			TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 			List<FormField> properties = tfd.getFormFields();
-			
-			// KOMENTAR: PROBA!
-			/*
-			Korisnik probaKorisnik = getUrednikNO(processId);
-			if (probaKorisnik != null)
-			{
-				System.out.println("ProbaKorisnik username je: " + probaKorisnik.getUsername());
-			}
-			
-			List<Korisnik> sviRecenzentiCasopisa = getRecenzentiCasopis(processId);
-			if (sviRecenzentiCasopisa.size() != 0)
-			{
-				System.out.println("ProbaKorisnik recenzenata casopisa ima: " + sviRecenzentiCasopisa.size());
-			}
-			
-			List<Korisnik> recenzentiNO = getRecenzentiNO(processId);
-			if (recenzentiNO.size() != 0)
-			{
-				System.out.println("ProbaKorisnik recenzenata casopisa koji rade za izabranu naucnu oblast ima: " + recenzentiNO.size());
-			}
-			*/
-
-			
+		
 	        return new FormFieldsDto(nextTask.getId(), processId, properties);
 	    }
 		
@@ -504,9 +524,7 @@ public class ObradaTekstaController
 				
 				TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 				List<FormField> properties = tfd.getFormFields();
-				
-				
-				
+
 		        return new FormFieldsDto(nextTask.getId(), processId, properties);
 		    }
 			
@@ -673,6 +691,50 @@ public class ObradaTekstaController
 				System.out.println("Recenzenata ima: " + recenzenti.size());
 				return new ResponseEntity<List<Korisnik>>(recenzenti, HttpStatus.OK);
 			}
+
+			@RequestMapping(value="/getRecenzentiCasopis2/{processId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
+			public List<Korisnik> getRecenzentiCasopis2(@PathVariable String processId)
+			{		
+
+				List<Casopis> casopisi = casopisRepository.findAll();
+				List<Korisnik> sviKorisnici = korisnikRepository.findAll();
+				List<Korisnik> recenzenti = new ArrayList<Korisnik>();
+				
+				List<FormSubmissonDTO> izabranCasopisForm = (List<FormSubmissonDTO>)runtimeService.getVariable(processId, "izabranCasopis");
+				Casopis casopis = new Casopis();
+				 
+				 for(FormSubmissonDTO item: izabranCasopisForm)
+				  {
+					  String fieldId=item.getFieldId();
+					  
+					 if(fieldId.equals("casopisiL")){
+						  
+						  List<Casopis> allCasopisi = casopisRepository.findAll();
+						  for(Casopis c : allCasopisi){
+							  for(String selectedEd:item.getCategories())
+							  {
+								  String idS= c.getId().toString();
+								  
+								  if(idS.equals(selectedEd)){
+									  System.out.println(c.getNaziv());
+									  casopis = casopisRepository.findOneByIssn(c.getIssn());
+									  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
+									  break ;
+									  
+								  }
+							  }
+						  }
+					 }
+					 
+				  }
+				for (Korisnik k: casopis.getRecenzentiCasopis())
+				{
+					recenzenti.add(k);
+				}
+				System.out.println("Recenzenata ima: " + recenzenti.size());
+				return recenzenti;
+			}
+
 			
 			// vraca urednike koji rade za izabrani casopis, a koji su urednici naucne oblasti rada
 			@RequestMapping(value="/getUrednikNO/{processId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
@@ -705,9 +767,7 @@ public class ObradaTekstaController
 								  String idS= c.getId().toString();
 								  
 								  if(idS.equals(selectedEd)){
-									  System.out.println(c.getNaziv());
 									  casopis = casopisRepository.findOneByIssn(c.getIssn());
-									  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
 									  break ;
 									  
 								  }
@@ -784,6 +844,7 @@ public class ObradaTekstaController
 									 urednikNO = k;
 									 System.out.println("Nasao sam urednika naucne oblasti!");
 									 System.out.println("Izabrani urednik naucne oblasti je: " + urednikNO.getUsername()); 
+									 break ;
 								 }
 							 }
 							 
@@ -829,9 +890,8 @@ public class ObradaTekstaController
 								  String idS= c.getId().toString();
 								  
 								  if(idS.equals(selectedEd)){
-									  System.out.println(c.getNaziv());
 									  casopis = casopisRepository.findOneByIssn(c.getIssn());
-									  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
+									  
 									  break ;
 									  
 								  }
@@ -944,6 +1004,23 @@ public class ObradaTekstaController
 					
 					TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 					List<FormField> properties = tfd.getFormFields();
+					
+					// dinamicko ucitavanje
+					List<Korisnik> recenzenti = getRecenzentiCasopis2(processId);
+					for (FormField fp: properties)
+					{
+						if (fp.getId().equals("recenzentiL"))
+						{
+							EnumFormType enumType = (EnumFormType) fp.getType();
+							enumType.getValues().clear();
+							
+							for (Korisnik k: recenzenti)
+							{
+								enumType.getValues().put(k.getId().toString(), k.getIme() + " " + k.getPrezime());
+							}
+							break ;
+						}
+					}
 					
 					
 					

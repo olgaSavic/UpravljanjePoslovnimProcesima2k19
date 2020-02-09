@@ -7,12 +7,19 @@
       <input type="text" name={{field.id}} ngModel  *ngIf="field.type.name=='string' && field.id != 'pdf'" >
       <input type="checkbox" name={{field.id}} ngModel  *ngIf="field.type.name=='boolean'">
       <input type="number" name={{field.id}} ngModel  *ngIf="field.type.name=='long'">
+
+      <!--
       <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum' ">
         <option *ngFor="let category of naucneOblasti" value={{category.id}}>
           {{category.nazivNO}}
         </option>
       </select>
-
+      -->
+      <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum' ">
+        <option *ngFor="let val of enumValues" value={{val}}>
+          {{field.type.values[val]}}
+        </option>
+      </select>
       <input  type="file" accept="application/pdf" *ngIf="field.properties.type == 'file'" (change)="fileChoserListener($event.target.files, field)">
 
 

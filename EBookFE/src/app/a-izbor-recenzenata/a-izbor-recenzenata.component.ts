@@ -19,6 +19,9 @@ export class AIzborRecenzenataComponent implements OnInit {
   private reviewers = [];
   private editors = [];
   private processInstance: any ;
+  private enumValues = [];
+  private enumValues2 = [];
+
   // tslint:disable-next-line:max-line-length
   constructor(private route: ActivatedRoute,
               protected router: Router,
@@ -35,6 +38,18 @@ export class AIzborRecenzenataComponent implements OnInit {
         this.formFields = res.formFields;
         console.log(this.formFields);
 
+        this.formFields.forEach( (field) =>{
+
+          if( field.type.name=='enum' && field.id == 'recenzentiL'){
+            this.enumValues = Object.keys(field.type.values);
+            //this.reviewers = this.enumValues;
+          }
+          else {
+            this.enumValues2 = Object.keys(field.type.values);
+          }
+        });
+
+        /*
         this.obradaService.getRecenzentiCasopis(this.processInstance).subscribe(
           pom => {
             console.log('Ispis recenzenata');
@@ -42,6 +57,7 @@ export class AIzborRecenzenataComponent implements OnInit {
             this.reviewers = pom;
           }
         );
+        */
 
       },
       err => {
