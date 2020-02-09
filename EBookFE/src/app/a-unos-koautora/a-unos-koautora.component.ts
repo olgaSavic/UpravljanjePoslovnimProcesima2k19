@@ -57,6 +57,7 @@ export class AUnosKoautoraComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
   onSubmit(value, form){

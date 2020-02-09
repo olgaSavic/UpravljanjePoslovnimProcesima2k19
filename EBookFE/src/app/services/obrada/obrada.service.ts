@@ -147,6 +147,15 @@ export class ObradaService {
     return this.httpClient.get('http://localhost:8080/obrada/getRecenzentiNO/'.concat(processId)) as Observable<any>;
   }
 
+  sledeciTaskIzborFiltriranihRec(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskIzborFiltriranihRec/'.concat(processId)) as Observable<any>;
+  }
+
+  // pomocna
+  trenutniKorisnik() {
+    return this.httpClient.get('http://localhost:8080/obrada/trenutniKorisnik')as Observable<any>;
+  }
+
 
 
 }

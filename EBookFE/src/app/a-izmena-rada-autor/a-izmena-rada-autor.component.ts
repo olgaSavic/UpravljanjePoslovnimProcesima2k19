@@ -68,6 +68,8 @@ export class AIzmenaRadaAutorComponent implements OnInit {
   }
 
   ngOnInit() {
+
+
   }
 
   onSubmit(value, form){

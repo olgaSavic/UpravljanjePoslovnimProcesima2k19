@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {ObradaService} from '../services/obrada/obrada.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-a-kraj-tematski-neprihvatljiv',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AKrajTematskiNeprihvatljivComponent implements OnInit {
 
-  constructor() { }
+  constructor(private obradService: ObradaService,
+              protected router: Router) { }
 
   ngOnInit() {
+
+
   }
 
 }

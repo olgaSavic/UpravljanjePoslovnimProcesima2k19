@@ -4,6 +4,7 @@ import {UserService} from '../services/users/user.service';
 import {NaucnaOblastService} from '../services/naucna-oblast/naucna-oblast.service';
 import {RepositoryService} from '../services/repository/repository.service';
 import {ObradaService} from '../services/obrada/obrada.service';
+import {AuthService} from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-a-izbor-recenzenata',
@@ -25,6 +26,7 @@ export class AIzborRecenzenataComponent implements OnInit {
   // tslint:disable-next-line:max-line-length
   constructor(private route: ActivatedRoute,
               protected router: Router,
+              private authService: AuthService,
               private obradaService: ObradaService) {
 
     const processInstanceId = this.route.snapshot.params.processInstanceId ;
@@ -42,7 +44,7 @@ export class AIzborRecenzenataComponent implements OnInit {
 
           if( field.type.name=='enum' && field.id == 'recenzentiL'){
             this.enumValues = Object.keys(field.type.values);
-            //this.reviewers = this.enumValues;
+            this.reviewers = Object.keys(field.type.values);
           }
           else {
             this.enumValues2 = Object.keys(field.type.values);
@@ -68,6 +70,19 @@ export class AIzborRecenzenataComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.authService.getCurrentUser().subscribe(
+      data => {
+
+        if(data.tip != "UREDNIK"){
+          this.router.navigate(["login"]);
+        }
+
+      },
+      error => {
+        this.router.navigate(["login"]);
+      }
+    )
   }
 
 
@@ -79,13 +94,8 @@ export class AIzborRecenzenataComponent implements OnInit {
     // tslint:disable-next-line:forin
     for (const property in value) {
 
-      if (property != 'recenzentiL' ) {
-        o.push({fieldId : property, fieldValue : value[property]});
-      } else {
         o.push({fieldId : property, categories : value[property]});
-
-      }
-      console.log(o);
+        console.log(o);
     }
 
     let x = this.obradaService.sacuvajIzborRec(o, this.formFieldsDto.taskId);
@@ -104,12 +114,31 @@ export class AIzborRecenzenataComponent implements OnInit {
 
   filtriraj()
   {
-    let x = this.obradaService.getRecenzentiNO(this.processInstance);
 
-    x.subscribe(res => {
-      this.reviewers = res;
+    const x = this.obradaService.sledeciTaskIzborFiltriranihRec(this.processInstance);
 
-    })
+    x.subscribe(
+      res => {
+        console.log(res);
+        this.formFieldsDto = res;
+        this.formFields = res.formFields;
+        console.log(this.formFields);
+        this.formFields.forEach( (field) =>{
+
+          if( field.type.name=='enum' && field.id == 'recenzentiL'){
+            this.enumValues = Object.keys(field.type.values);
+            this.reviewers = Object.keys(field.type.values);
+          }
+          else {
+            this.enumValues2 = Object.keys(field.type.values);
+          }
+        });
+        );
+      },
+      err => {
+        console.log('Error occured');
+      }
+    );
 
   }
 

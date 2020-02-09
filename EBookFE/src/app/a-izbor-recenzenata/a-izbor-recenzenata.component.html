@@ -12,11 +12,14 @@
         <input type="checkbox" name={{field.id}} ngModel  *ngIf="field.type.name=='boolean'">
         <input type="number" name={{field.id}} ngModel  *ngIf="field.type.name=='long'">
 
+
         <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum' && field.id == 'recenzentiL' ">
           <option *ngFor="let val of enumValues" value={{val}}>
             {{field.type.values[val]}}
           </option>
         </select>
+
+
 
         <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum' && field.id != 'recenzentiL' ">
           <option *ngFor="let val2 of enumValues2" value={{val2}}>
@@ -24,13 +27,6 @@
           </option>
         </select>
 
-        <!--
-        <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum' && field.id == 'recenzentiL'">
-          <option *ngFor="let category of reviewers" value={{category.id}}>
-            {{category.ime}}  {{category.prezime}}
-          </option>
-        </select>
-        -->
       </div>
       <br>
       <div>

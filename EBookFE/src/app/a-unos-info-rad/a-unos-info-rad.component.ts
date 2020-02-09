@@ -68,6 +68,7 @@ export class AUnosInfoRadComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
   onSubmit(value, form){

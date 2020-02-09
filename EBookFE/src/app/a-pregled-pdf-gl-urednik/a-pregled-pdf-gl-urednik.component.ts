@@ -3,6 +3,7 @@ import {UserService} from '../services/users/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {RepositoryService} from '../services/repository/repository.service';
 import {ObradaService} from '../services/obrada/obrada.service';
+import {AuthService} from '../services/auth/auth.service';
 
 @Component({
   selector: 'app-a-pregled-pdf-gl-urednik',
@@ -30,6 +31,7 @@ export class APregledPdfGlUrednikComponent implements OnInit {
   constructor(private userService : UserService,
               private route: ActivatedRoute,
               protected  router: Router,
+              private authService: AuthService,
               private repositoryService : RepositoryService,
               private obradaService: ObradaService) {
 
@@ -63,6 +65,19 @@ export class APregledPdfGlUrednikComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.authService.getCurrentUser().subscribe(
+      data => {
+
+        if(data.tip != "UREDNIK"){
+          this.router.navigate(["login"]);
+        }
+
+      },
+      error => {
+        this.router.navigate(["login"]);
+      }
+    )
   }
 
   onSubmit(value, form){

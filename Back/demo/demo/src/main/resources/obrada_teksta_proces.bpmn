@@ -245,7 +245,7 @@
     <bpmn:sequenceFlow id="postojiDvaRec" name="postoji MIN dva recenzenta" sourceRef="ExclusiveGateway_0f2zfix" targetRef="izborDvaRec">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${brojRecenzenataVar &gt;= 2}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="izborDvaRec" name="Izbor dva recenzenta" camunda:assignee="${dodeljeniUrednik}">
+    <bpmn:userTask id="izborDvaRec" name="Izbor recenzenata i zadavanje roka ispravke:" camunda:assignee="${dodeljeniUrednik}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="recenzentiL" label="Izaberite minimum dva recenzenta:" type="enum" />
