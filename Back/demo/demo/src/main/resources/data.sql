@@ -48,7 +48,7 @@ insert into db_upp.naucna_oblast_casopis(id, nazivNO)
 INSERT INTO db_upp.casopis_recenzent VALUES (100, 500), (100, 600), (100, 700);	
 INSERT INTO db_upp.casopis_urednik VALUES (100, 300), (100, 400);
 
-INSERT INTO db_upp.casopis_no VALUES (100, 100), (100, 200), (200, 300), (200, 400), (300, 500), (300, 600);	
+INSERT INTO db_upp.casopis_no VALUES (100, 100), (100, 300), (200, 200), (200, 400), (300, 500), (300, 600);	
 	
-INSERT INTO db_upp.nocas_recenzent VALUES (100, 500), (100, 600), (200, 700);	
-INSERT INTO db_upp.nocas_urednik VALUES (100, 300), (200, 400);	
+INSERT INTO db_upp.nocas_recenzent VALUES (100, 500), (100, 600), (300, 700);	
+INSERT INTO db_upp.nocas_urednik VALUES (100, 300), (300, 400);	

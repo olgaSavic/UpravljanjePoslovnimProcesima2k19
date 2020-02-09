@@ -86,10 +86,15 @@ export class ObradaService {
   completeTask(processId: string, task) {
     console.log(task.name);
     console.log(task.taskId);
-    if (task.name === 'Obrada rada') // ukoliko se nalazi na urednikovom tasku
+    if (task.name === 'Obrada rada') // ukoliko se nalazi na urednikovom tasku obrada rada
     {
       window.location.href = 'pregledRadaUrednik/' + processId + '/' + task.taskId;
-    } else { // ukoliko se nalazi na autorovom tasku
+    }
+    else if (task.name === 'Izbor dva recenzenta') // ukoliko je dosao do taska za izbor dva recenzenta
+    {
+      window.location.href = 'izborRecenzenata/' +  processId + '/' + task.taskId;
+    }
+    else { // ukoliko se nalazi na autorovom tasku
       window.location.href = 'izmenaRadaAutor/' + processId + '/' + task.taskId;
 
     }
@@ -122,6 +127,24 @@ export class ObradaService {
 
   sacuvajKorekcijuAutorSaPdf(y, taskId) {
     return this.httpClient.post('http://localhost:8080/obrada/sacuvajKorekcijuAutorSaPdf/'.concat(taskId), y) as Observable<any>;
+  }
+
+  // ----------------------------------------------
+  getRecenzentiCasopis(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/getRecenzentiCasopis/'.concat(processId)) as Observable<any>;
+  }
+
+  sledeciTaskIzborRec(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskIzborRec/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajIzborRec(rad, taskId) {
+    console.log(rad);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajIzborRec/'.concat(taskId), rad) as Observable<any>;
+  }
+
+  getRecenzentiNO(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/getRecenzentiNO/'.concat(processId)) as Observable<any>;
   }
 
 

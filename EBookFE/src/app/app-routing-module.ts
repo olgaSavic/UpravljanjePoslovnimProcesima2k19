@@ -28,6 +28,7 @@ import {ALoginDrugiObradaComponent} from './a-login-drugi-obrada/a-login-drugi-o
 import {AHomepageComponent} from './a-homepage/a-homepage.component';
 import {APregledPdfGlUrednikComponent} from './a-pregled-pdf-gl-urednik/a-pregled-pdf-gl-urednik.component';
 import {AKrajTematskiNeprihvatljivComponent} from './a-kraj-tematski-neprihvatljiv/a-kraj-tematski-neprihvatljiv.component';
+import {AIzborRecenzenataComponent} from './a-izbor-recenzenata/a-izbor-recenzenata.component';
 
 const routes: Routes = [
 
@@ -62,7 +63,8 @@ const routes: Routes = [
   { path: 'homepage/:processInstanceId', component: AHomepageComponent },
   { path: 'loginDrugiObrada/:processInstanceId', component: ALoginDrugiObradaComponent },
   { path: 'pregledPdfUrednik/:processInstanceId', component: APregledPdfGlUrednikComponent},
-  { path: 'krajTematskiNeprihvatljiv', component: AKrajTematskiNeprihvatljivComponent}
+  { path: 'krajTematskiNeprihvatljiv', component: AKrajTematskiNeprihvatljivComponent},
+  { path: 'izborRecenzenata/:processInstanceId/:taskId', component: AIzborRecenzenataComponent }
 
 
 

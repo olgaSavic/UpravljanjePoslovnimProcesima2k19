@@ -410,6 +410,28 @@ public class ObradaTekstaController
 			TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
 			List<FormField> properties = tfd.getFormFields();
 			
+			// KOMENTAR: PROBA!
+			/*
+			Korisnik probaKorisnik = getUrednikNO(processId);
+			if (probaKorisnik != null)
+			{
+				System.out.println("ProbaKorisnik username je: " + probaKorisnik.getUsername());
+			}
+			
+			List<Korisnik> sviRecenzentiCasopisa = getRecenzentiCasopis(processId);
+			if (sviRecenzentiCasopisa.size() != 0)
+			{
+				System.out.println("ProbaKorisnik recenzenata casopisa ima: " + sviRecenzentiCasopisa.size());
+			}
+			
+			List<Korisnik> recenzentiNO = getRecenzentiNO(processId);
+			if (recenzentiNO.size() != 0)
+			{
+				System.out.println("ProbaKorisnik recenzenata casopisa koji rade za izabranu naucnu oblast ima: " + recenzentiNO.size());
+			}
+			*/
+
+			
 	        return new FormFieldsDto(nextTask.getId(), processId, properties);
 	    }
 		
@@ -643,13 +665,322 @@ public class ObradaTekstaController
 						  }
 					 }
 					 
-					}
+				  }
 				for (Korisnik k: casopis.getRecenzentiCasopis())
 				{
 					recenzenti.add(k);
 				}
 				System.out.println("Recenzenata ima: " + recenzenti.size());
 				return new ResponseEntity<List<Korisnik>>(recenzenti, HttpStatus.OK);
-			}				
+			}
+			
+			// vraca urednike koji rade za izabrani casopis, a koji su urednici naucne oblasti rada
+			@RequestMapping(value="/getUrednikNO/{processId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
+			public Korisnik getUrednikNO(@PathVariable String processId)	
+			{
+				List<Casopis> casopisi = casopisRepository.findAll();
+				List<Korisnik> sviKorisnici = korisnikRepository.findAll();
+				List<NaucnaOblastCasopis> sveNaucneOblasti = noRepository.findAll();
+				
+				List<Korisnik> uredniciNO = new ArrayList<Korisnik>();
+				List<NaucnaOblastCasopis> naucneOCasopis = new ArrayList<NaucnaOblastCasopis>();
+				NaucnaOblastCasopis radNaucnaOblast = new NaucnaOblastCasopis();
+				
+				Korisnik urednikNO = new Korisnik();
+				
+				
+				List<FormSubmissonDTO> izabranCasopisForm = (List<FormSubmissonDTO>)runtimeService.getVariable(processId, "izabranCasopis");
+				Casopis casopis = new Casopis();
+				 
+				 for(FormSubmissonDTO item: izabranCasopisForm)
+				  {
+					  String fieldId=item.getFieldId();
+					  
+					 if(fieldId.equals("casopisiL")){
+						  
+						  List<Casopis> allCasopisi = casopisRepository.findAll();
+						  for(Casopis c : allCasopisi){
+							  for(String selectedEd:item.getCategories())
+							  {
+								  String idS= c.getId().toString();
+								  
+								  if(idS.equals(selectedEd)){
+									  System.out.println(c.getNaziv());
+									  casopis = casopisRepository.findOneByIssn(c.getIssn());
+									  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
+									  break ;
+									  
+								  }
+							  }
+						  }
+					 }
+					 
+				  }
+				// sada imam sacuvan casopis koji je korisnik izabrao
+				 
+				List<FormSubmissonDTO> infoRad = (List<FormSubmissonDTO>)runtimeService.getVariable(processId, "infoRad");
+			      for (FormSubmissonDTO formField : infoRad) 
+			      {
+					
+					String fieldId = formField.getFieldId();
+					if(fieldId.equals("naucnaOblastL")){
+						  
+						  List<NaucnaOblastCasopis> allOblasti = noRepository.findAll();
+						  for(NaucnaOblastCasopis no : allOblasti){
+							  for(String selectedEd:formField.getCategories())
+							  {
+								  String idS = no.getId().toString();
+								  if(idS.equals(selectedEd)){
+									  radNaucnaOblast = no ;
+									  break ;
+									  
+								  }
+							  }
+						  }
+					 }
+					
+					
+					
+			      }
+				 
+				 for (Korisnik k: casopis.getUredniciCasopis())
+					{
+						uredniciNO.add(k);
+					}
+				System.out.println("Urednika naucnih oblasti u casopisu ima: " + uredniciNO.size());
+				// sada imam sacuvane sve urednike naucnih oblasti tog casopisa
+				
+				 if (uredniciNO.size() == 0) // ne postoji nijedan urednik naucne oblasti u casopisu
+				 {
+					 System.out.println("Ne postoji nijedan urednik naucne oblasti u casopisu!");
+					 //return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+					 return null ;
+				 }
+				 
+				 for (NaucnaOblastCasopis no: casopis.getNaucneOblasti())
+				 {
+					 naucneOCasopis.add(no);
+				 } 
+				 // sada imam sacuvane naucne oblasti casopisa
+				 
+				 if (naucneOCasopis.size() == 0) // ne postoji nijedna naucna oblast u casopisu
+				 {
+					 System.out.println("Ne postoji nijedna naucna oblast u casopisu!");
+					 //return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+					 return null ;
+				 }
+				 
+				 
+				 for (Korisnik k: uredniciNO)
+				 {
+					 for (NaucnaOblastCasopis no: naucneOCasopis)
+					 {
+						 if (no.getId().equals(radNaucnaOblast.getId()))
+						 {
+							 for (Korisnik k2: radNaucnaOblast.getUredniciNO())
+							 {
+								 if (k2.getId().equals(k.getId()))
+								 {
+									 urednikNO = k;
+									 System.out.println("Nasao sam urednika naucne oblasti!");
+									 System.out.println("Izabrani urednik naucne oblasti je: " + urednikNO.getUsername()); 
+								 }
+							 }
+							 
+						 }
+					 }
+				 }
+				
+				
+				return urednikNO;
+
+				 
+				 
+			}
+
+			// vraca urednike koji rade za izabrani casopis, a koji su urednici naucne oblasti rada
+			@RequestMapping(value="/getRecenzentiNO/{processId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)	
+			public ResponseEntity <List<Korisnik>> getRecenzentiNO(@PathVariable String processId)	
+			{
+				List<Casopis> casopisi = casopisRepository.findAll();
+				List<Korisnik> sviKorisnici = korisnikRepository.findAll();
+				List<NaucnaOblastCasopis> sveNaucneOblasti = noRepository.findAll();
+				
+				List<NaucnaOblastCasopis> naucneOCasopis = new ArrayList<NaucnaOblastCasopis>();
+				NaucnaOblastCasopis radNaucnaOblast = new NaucnaOblastCasopis();
+				
+				List<Korisnik> recenzentiNO = new ArrayList<Korisnik>();
+				List<Korisnik> recenzentiCasopis = new ArrayList<Korisnik>();
+				
+				
+				List<FormSubmissonDTO> izabranCasopisForm = (List<FormSubmissonDTO>)runtimeService.getVariable(processId, "izabranCasopis");
+				Casopis casopis = new Casopis();
+				 
+				 for(FormSubmissonDTO item: izabranCasopisForm)
+				  {
+					  String fieldId=item.getFieldId();
+					  
+					 if(fieldId.equals("casopisiL")){
+						  
+						  List<Casopis> allCasopisi = casopisRepository.findAll();
+						  for(Casopis c : allCasopisi){
+							  for(String selectedEd:item.getCategories())
+							  {
+								  String idS= c.getId().toString();
+								  
+								  if(idS.equals(selectedEd)){
+									  System.out.println(c.getNaziv());
+									  casopis = casopisRepository.findOneByIssn(c.getIssn());
+									  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
+									  break ;
+									  
+								  }
+							  }
+						  }
+					 }
+					 
+				  }
+				// sada imam sacuvan casopis koji je korisnik izabrao
+				 
+				List<FormSubmissonDTO> infoRad = (List<FormSubmissonDTO>)runtimeService.getVariable(processId, "infoRad");
+			      for (FormSubmissonDTO formField : infoRad) 
+			      {
+					
+					String fieldId = formField.getFieldId();
+					if(fieldId.equals("naucnaOblastL")){
+						  
+						  List<NaucnaOblastCasopis> allOblasti = noRepository.findAll();
+						  for(NaucnaOblastCasopis no : allOblasti){
+							  for(String selectedEd:formField.getCategories())
+							  {
+								  String idS = no.getId().toString();
+								  if(idS.equals(selectedEd)){
+									  radNaucnaOblast = no ;
+									  break ;
+									  
+								  }
+							  }
+						  }
+					 }
+					
+					
+					
+			      }
+			      // nasla sam naucnu oblast kojoj rad pripada
+				 
+				 for (Korisnik k: casopis.getRecenzentiCasopis())
+					{
+					 recenzentiCasopis.add(k);
+					}
+				System.out.println("Recenzenta u casopisu ima: " + recenzentiCasopis.size());
+				// sada imam sacuvane sve recenzente tog casopisa
+				
+				 if (recenzentiCasopis.size() == 0) // ne postoji nijedan recenzent u casopisu
+				 {
+					 System.out.println("Ne postoji nijedan recenzent u casopisu!");
+					 return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+					 //return null ;
+				 }
+				 
+				 for (NaucnaOblastCasopis no: casopis.getNaucneOblasti())
+				 {
+					 naucneOCasopis.add(no);
+				 } 
+				 // sada imam sacuvane naucne oblasti casopisa
+				 
+				 if (naucneOCasopis.size() == 0) // ne postoji nijedna naucna oblast u casopisu
+				 {
+					 System.out.println("Ne postoji nijedna naucna oblast u casopisu!");
+					 return new ResponseEntity<>(HttpStatus.BAD_REQUEST); 
+					 //return null ;
+				 }
+				 
+				 
+				 for (Korisnik k: recenzentiCasopis)
+				 {
+					 for (NaucnaOblastCasopis no: naucneOCasopis)
+					 {
+						 if (no.getId().equals(radNaucnaOblast.getId()))
+						 {
+							 for (Korisnik k2: radNaucnaOblast.getRecenzentiNO())
+							 {
+								 if (k2.getId().equals(k.getId()))
+								 {
+									 recenzentiNO.add(k);
+									 System.out.println("Nasao sam recenzenta naucne oblasti!");
+									 System.out.println("Izabrani urednik naucne oblasti je: " + k.getUsername()); 
+								 }
+							 }
+							 
+						 }
+					 }
+				 }
+				
+				System.out.println("Recenzenata koji rade u casopisu, a koji su bas za datu naucnu oblast ima: " + recenzentiNO.size());
+				return new ResponseEntity<List<Korisnik>>(recenzentiNO, HttpStatus.OK);
+
+				 
+				 
+			}
+			
+			
+			 // ucitavanje forme gde urednik pregleda ono uneseno o radu
+			 @GetMapping(path = "/sledeciTaskIzborRec/{processId}", produces = "application/json")
+			    public @ResponseBody FormFieldsDto sledeciTaskIzborRec(@PathVariable String processId) {
+
+					List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+					List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+					
+					if(tasks.size()==0){
+						System.out.println("Prazna lista, nema vise taskova");
+					}
+					for(Task T: tasks)
+					{
+						System.out.println("Dodaje task "+T.getName());
+						taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+					}
+					
+					Task nextTask = tasks.get(0);
+					
+					TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+					List<FormField> properties = tfd.getFormFields();
+					
+					
+					
+			        return new FormFieldsDto(nextTask.getId(), processId, properties);
+			    }
+				
+			 	// urednik nakon sto pregleda rad i klikne na submit
+				@PostMapping(path = "/sacuvajIzborRec/{taskId}", produces = "application/json")
+			    public @ResponseBody ResponseEntity sacuvajIzborRec(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
+					
+					HashMap<String, Object> map = this.mapListToDto(formData);
+					Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+					String processInstanceId = task.getProcessInstanceId();
+					
+					TaskFormData tfd = formService.getTaskFormData(taskId);
+					List<FormField> formFields = tfd.getFormFields();
+					
+					for(FormSubmissonDTO item: formData){
+						String fieldId = item.getFieldId();
+						if(fieldId.equals("recenzentiL"))
+						{
+							if(item.getCategories().size() < 2 )
+							{
+								System.out.println("Mora biti izabrano barem dva recenzenta!");	
+								return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+							}
+						}
+					}
+					
+					try{
+						runtimeService.setVariable(processInstanceId, "izborRecenzenata", formData);
+						formService.submitTaskForm(taskId, map);
+				     				    
+					}catch(FormFieldValidationException e){
+						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+					}
+					return new ResponseEntity<>(HttpStatus.OK);
+			    }	
 
 }

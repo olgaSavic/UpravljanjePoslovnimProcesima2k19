@@ -1,0 +1,33 @@
+<div class="midDiv">
+  <h3>Unesite urednike naucnih oblasti i recenzente za casopis</h3>
+</div>
+<div fxLayout="row" fxLayoutAlign="center center">
+  <div fxLex="25%">
+  </div>
+  <div fxLex="50%">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f.value, f)" ngNativeValidate>
+      <div *ngFor="let field of formFields" >
+        <label for={{field.id}}>{{field.label}}</label>
+        <input type="text" name={{field.id}} ngModel  *ngIf="field.type.name=='string'" >
+        <input type="checkbox" name={{field.id}} ngModel  *ngIf="field.type.name=='boolean'">
+        <input type="number" name={{field.id}} ngModel  *ngIf="field.type.name=='long'">
+        <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum'">
+          <option *ngFor="let category of reviewers" value={{category.id}}>
+            {{category.ime}}  {{category.prezime}}
+          </option>
+        </select>
+
+      </div>
+      <br>
+      <div>
+        <button type = "submit" (click)="filtriraj()"> Filtriraj </button>
+        &nbsp;
+        <input type="submit">
+      </div>
+
+    </form>
+  </div>
+
+  <div fxLex="25%">
+  </div>
+</div>

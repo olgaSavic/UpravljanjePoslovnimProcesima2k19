@@ -185,20 +185,8 @@
       <bpmn:outgoing>dobroFormatiran</bpmn:outgoing>
       <bpmn:outgoing>loseFormatiran</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="dobroFormatiran" name="dobro formatiran" sourceRef="ExclusiveGateway_0se63fw" targetRef="slanjeRec">
+    <bpmn:sequenceFlow id="dobroFormatiran" name="dobro formatiran" sourceRef="ExclusiveGateway_0se63fw" targetRef="proveraUrednikNO">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${formatiran == true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:userTask id="slanjeRec" name="Slanje rada na recenziju" camunda:assignee="${glavniUrednikVar}">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="recenzija" label="Posalji rad na recenziju:" type="boolean" defaultValue="true" />
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>dobroFormatiran</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_09ephp2</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="recenzijaFlow" name="slanje na recenziju" sourceRef="ExclusiveGateway_0vuss2r" targetRef="proveraUrednikNO">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${recenzija == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="loseFormatiran" name="lose formatiran" sourceRef="ExclusiveGateway_0se63fw" targetRef="emailAutorFormatiranje">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${formatiran == false}</bpmn:conditionExpression>
@@ -241,160 +229,36 @@
       </bpmn:timerEventDefinition>
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0cmh1kh" sourceRef="satic1" targetRef="odbijenService" />
-    <bpmn:endEvent id="krajNeceRecenziju" name="krajNeceRecenziju">
-      <bpmn:incoming>neceRecenziju</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="neceRecenziju" name="nece recenziju" sourceRef="ExclusiveGateway_0vuss2r" targetRef="krajNeceRecenziju">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${recenzija == false}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0vuss2r">
-      <bpmn:incoming>SequenceFlow_09ephp2</bpmn:incoming>
-      <bpmn:outgoing>neceRecenziju</bpmn:outgoing>
-      <bpmn:outgoing>recenzijaFlow</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_09ephp2" sourceRef="slanjeRec" targetRef="ExclusiveGateway_0vuss2r" />
-    <bpmn:serviceTask id="proveraUrednikNO" name="Provera da li postoji aktivan urednik naucne oblasti" camunda:expression="${true == true}" camunda:resultVariable="resUrednikNO">
-      <bpmn:incoming>recenzijaFlow</bpmn:incoming>
+    <bpmn:serviceTask id="proveraUrednikNO" name="Odredjivanje kome ce biti dodeljeno recenziranje" camunda:class="root.demo.services.AAProveraUrednikNOService">
+      <bpmn:incoming>dobroFormatiran</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_14ap3v4</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_152e87y">
-      <bpmn:incoming>SequenceFlow_14ap3v4</bpmn:incoming>
-      <bpmn:outgoing>postojiUrednikNO</bpmn:outgoing>
-      <bpmn:outgoing>nePostojiUrednikNO</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_14ap3v4" sourceRef="proveraUrednikNO" targetRef="ExclusiveGateway_152e87y" />
-    <bpmn:sequenceFlow id="postojiUrednikNO" name="postoji urednikNO" sourceRef="ExclusiveGateway_152e87y" targetRef="automatskiIzborUrednikaNO">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${resUrednikNO == false}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="nePostojiUrednikNO" name="ne postoji urednikNO" sourceRef="ExclusiveGateway_152e87y" targetRef="dodelaPoslaGU">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${resUrednikNO == true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="SequenceFlow_0jbja8q" sourceRef="automatskiIzborUrednikaNO" targetRef="slanjeNotifikacijeUrednikuNO" />
-    <bpmn:serviceTask id="automatskiIzborUrednikaNO" name="Izbor urednika NO" camunda:expression="{true == true}">
-      <bpmn:incoming>postojiUrednikNO</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0jbja8q</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="slanjeNotifikacijeUrednikuNO" name="Slanje notifikacije uredniku NO" camunda:expression="{true == true}">
-      <bpmn:incoming>SequenceFlow_0jbja8q</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1l9878w</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="dodelaPoslaGU" name="Dodela posla glavnom uredniku" camunda:expression="{true == true}">
-      <bpmn:incoming>nePostojiUrednikNO</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1cztgx5</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0raqm1u">
-      <bpmn:incoming>SequenceFlow_1l9878w</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1cztgx5</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_120ge1e</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_1l9878w" sourceRef="slanjeNotifikacijeUrednikuNO" targetRef="ExclusiveGateway_0raqm1u" />
-    <bpmn:sequenceFlow id="SequenceFlow_1cztgx5" sourceRef="dodelaPoslaGU" targetRef="ExclusiveGateway_0raqm1u" />
-    <bpmn:scriptTask id="ScriptTask_0e8eaz5" name="Ucitavanje liste recenzenata" scriptFormat="javascript">
-      <bpmn:incoming>SequenceFlow_120ge1e</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1ms2slx</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0r2cxfl</bpmn:outgoing>
-      <bpmn:script>var recenzenti = execution.getProcessEngineServices().getIdentityService().createUserQuery().memberOfGroup("recenzenti").list();
-var brojRecenzenata = recenzenti.length;
-execution.setVariable("recenzentiVar", recenzenti);
-execution.setVariable("brojRecenzenataVar", brojRecenzenata);
-execution.setVariable("odabraniRecenzentiVar", null);</bpmn:script>
-    </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="SequenceFlow_120ge1e" sourceRef="ExclusiveGateway_0raqm1u" targetRef="ScriptTask_0e8eaz5" />
+    <bpmn:sequenceFlow id="SequenceFlow_14ap3v4" sourceRef="proveraUrednikNO" targetRef="slanjeMejlaDodeljeni" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_0f2zfix">
       <bpmn:incoming>SequenceFlow_0xw0028</bpmn:incoming>
       <bpmn:outgoing>nePostojiDovoljnoRec</bpmn:outgoing>
       <bpmn:outgoing>postojiDvaRec</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="SequenceFlow_0r2cxfl" sourceRef="ScriptTask_0e8eaz5" targetRef="proveraRec" />
-    <bpmn:sequenceFlow id="nePostojiDovoljnoRec" name="ne postoji dovoljno recenzenata" sourceRef="ExclusiveGateway_0f2zfix" targetRef="dodelaGlUredRec">
+    <bpmn:sequenceFlow id="nePostojiDovoljnoRec" name="ne postoji dovoljno recenzenata" sourceRef="ExclusiveGateway_0f2zfix" targetRef="recenziranjeUrednik">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${brojRecenzenataVar &lt; 2}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="postojiDvaRec" name="postoji MIN dva recenzenta" sourceRef="ExclusiveGateway_0f2zfix" targetRef="izborDvaRec">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${brojRecenzenataVar &gt;= 2}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="izborDvaRec" name="Izbor dva recenzenta" camunda:assignee="${glavniUrednikVar}">
+    <bpmn:userTask id="izborDvaRec" name="Izbor dva recenzenta" camunda:assignee="${dodeljeniUrednik}">
       <bpmn:extensionElements>
         <camunda:formData>
-          <camunda:formField id="selBox1" label="Prvi recenzent:" type="enum" />
-          <camunda:formField id="selBox2" label="Drugi recenzent:" type="enum" />
-          <camunda:formField id="josRec" label="Zelite li unos jos recenzenata?" type="boolean" />
+          <camunda:formField id="recenzentiL" label="Izaberite minimum dva recenzenta:" type="enum" />
         </camunda:formData>
-        <camunda:taskListener event="create">
-          <camunda:script scriptFormat="Groovy">taskFormData = task.getExecution().getProcessEngineServices().getFormService().getTaskFormData(task.getId());
-
-formFields = taskFormData.getFormFields();
-
-if(formFields!=null){
-   for(field in formFields){
-       if( field.getId() == "selBox1" || field.getId() == "selBox2" ){
-           items = field.getType().getValues();
-           for(rec in recenzentiVar){
-               items.put(rec.getId(), rec.getFirstName()+" "+rec.getLastName());
-           }
-       }
-   }
-}</camunda:script>
-        </camunda:taskListener>
-        <camunda:taskListener event="complete">
-          <camunda:script scriptFormat="Groovy">taskFormData = task.getExecution().getProcessEngineServices().getFormService().getTaskFormData(task.getId());
-
-if (odabraniRecenzentiVar != null)
-{ 
-   recenzentIds = odabraniRecenzentiVar;
-}
-else
-{
-   recenzentIds = new java.util.ArrayList();
-}
-
-formFields = taskFormData.getFormFields();
-if(formFields!=null){
-   for(field in formFields){
-       if( field.getId() == "selBox1" || field.getId() == "selBox2" ){
-           if(field.getValue()!="none")
-                recenzentIds.add(field.getValue());
-       }
-   }
-}
-
-task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda:script>
-        </camunda:taskListener>
       </bpmn:extensionElements>
       <bpmn:incoming>postojiDvaRec</bpmn:incoming>
-      <bpmn:incoming>trajeUnosRec</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0zfqyuo</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_1dr33pt</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0zfqyuo" sourceRef="izborDvaRec" targetRef="ExclusiveGateway_0k9k2u0" />
     <bpmn:sequenceFlow id="SequenceFlow_0xw0028" sourceRef="proveraRec" targetRef="ExclusiveGateway_0f2zfix" />
-    <bpmn:serviceTask id="proveraRec" name="Provera da li recenzenti rade za casopis" camunda:expression="{true == true}">
-      <bpmn:incoming>SequenceFlow_0r2cxfl</bpmn:incoming>
+    <bpmn:serviceTask id="proveraRec" name="Provera da li postoje dva recenzenta za datu naucnu oblast:" camunda:class="root.demo.services.AAProveraRecenzentiService">
+      <bpmn:incoming>SequenceFlow_1yuji39</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0xw0028</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="ExclusiveGateway_0k9k2u0">
-      <bpmn:incoming>SequenceFlow_0zfqyuo</bpmn:incoming>
-      <bpmn:outgoing>gotovUnosRec</bpmn:outgoing>
-      <bpmn:outgoing>trajeUnosRec</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="gotovUnosRec" name="gotov unos recenzenata" sourceRef="ExclusiveGateway_0k9k2u0" targetRef="UserTask_1gsw1oj">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${josRec == false}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="trajeUnosRec" name="traje unos recenzenara" sourceRef="ExclusiveGateway_0k9k2u0" targetRef="izborDvaRec">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${josRec == true}</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:serviceTask id="dodelaGlUredRec" name="Dodela recenziranja glavnom uredniku" camunda:expression="{true == true}">
-      <bpmn:incoming>nePostojiDovoljnoRec</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1j5iar3</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="obavestavanjeUrednika" name="Obavestavanje urednika" camunda:expression="${true == true}" camunda:resultVariable="res">
-      <bpmn:incoming>izborNovogRec</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1ms2slx</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1ms2slx" sourceRef="obavestavanjeUrednika" targetRef="ScriptTask_0e8eaz5" />
-    <bpmn:serviceTask id="slanjeRadaDodUred" name="Slanje rada dodeljenom uredniku" camunda:expression="${true == true}">
-      <bpmn:incoming>SequenceFlow_1vff83y</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1nw582w</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1nw582w" sourceRef="slanjeRadaDodUred" targetRef="ExclusiveGateway_1je13h9" />
     <bpmn:userTask id="obradaUrednika" name="Obrada urednika" camunda:assignee="${glavniUrednikVar}">
       <bpmn:extensionElements>
         <camunda:formData>
@@ -543,9 +407,7 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
     </bpmn:sequenceFlow>
     <bpmn:serviceTask id="slanjeRecPregled" name="Slanje recenzentima na pregled" camunda:expression="{true == true}">
       <bpmn:incoming>SequenceFlow_14yeywb</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1qmc8fb</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_1qmc8fb" sourceRef="slanjeRecPregled" targetRef="UserTask_1gsw1oj" />
     <bpmn:sequenceFlow id="konPrih" name="rad konacno prihvacen" sourceRef="ExclusiveGateway_0oncs4x" targetRef="radDefPrih">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${prihRadObj == true}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -594,59 +456,12 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmn:outgoing>SequenceFlow_0zfdv71</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0q7uxax" sourceRef="pregledPDF" targetRef="ExclusiveGateway_0se63fw" />
-    <bpmn:userTask id="UserTask_1gsw1oj" name="Zadavanje roka za recenziranje" camunda:assignee="${glavniUrednikVar}">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="rokRec" label="Rok za recenziranje:" type="enum">
-            <camunda:value id="PT1M" name="PT1M" />
-            <camunda:value id="PT2M" name="PT2M" />
-            <camunda:value id="PT5M" name="PT5M" />
-          </camunda:formField>
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>gotovUnosRec</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_1qmc8fb</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_10bi15e</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:serviceTask id="ServiceTask_1b4efko" name="Cuvanje izbora" camunda:expression="{true == true}">
-      <bpmn:incoming>SequenceFlow_10bi15e</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_05j01g9</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:userTask id="recenziranje" name="Recenziranje" camunda:assignee="${jedanKorisnik}">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="naslov" label="Naslov rada:" type="string" defaultValue="${naslov}" />
-          <camunda:formField id="kljucniPojmovi" label="Kljucni pojmovi:" type="string" defaultValue="${kljucniPojmovi}" />
-          <camunda:formField id="apstrakt" label="Apstrakt:" type="string" defaultValue="${apstrakt}" />
-          <camunda:formField id="naucnaOblast2" label="Naucna oblast:" type="string" defaultValue="${naucnaOblast}" />
-          <camunda:formField id="pdf" label="PDF:" type="string" defaultValue="${pdf}" />
-          <camunda:formField id="komentarRad" label="Komentar o radu:" type="string" />
-          <camunda:formField id="preporukaObj" label="Preporuka za objavljivanje:" type="enum">
-            <camunda:value id="prihvatiti" name="Prihvatiti" />
-            <camunda:value id="prihvatitiManjeIspravke" name="Prihvatiti uz manje ispravke" />
-            <camunda:value id="uslovnoPrihvatiti" name="Uslovno prihvatiti" />
-            <camunda:value id="odbiti" name="Odbiti" />
-          </camunda:formField>
-          <camunda:formField id="komentarZaAutora" label="Komentar za autora:" type="string" />
-          <camunda:formField id="komentarZaUrednika" label="Komentar za urednika casopisa:" type="string" />
-        </camunda:formData>
-      </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_05j01g9</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_1vff83y</bpmn:outgoing>
-      <bpmn:multiInstanceLoopCharacteristics camunda:collection="${odabraniRecenzentiVar}" camunda:elementVariable="jedanKorisnik" />
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_05j01g9" sourceRef="ServiceTask_1b4efko" targetRef="recenziranje" />
-    <bpmn:sequenceFlow id="SequenceFlow_10bi15e" sourceRef="UserTask_1gsw1oj" targetRef="ServiceTask_1b4efko" />
-    <bpmn:sequenceFlow id="SequenceFlow_1vff83y" sourceRef="recenziranje" targetRef="slanjeRadaDodUred" />
-    <bpmn:sequenceFlow id="SequenceFlow_1j5iar3" sourceRef="dodelaGlUredRec" targetRef="recenziranjeUrednik" />
     <bpmn:userTask id="recenziranjeUrednik" name="Recenziranje glavni urednik" camunda:assignee="${glavniUrednikVar}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="naslov" label="Naslov:" type="string" defaultValue="${naslov}" />
           <camunda:formField id="kjucniPojmovi" label="Kljucni pojmovi:" type="string" defaultValue="${kljucniPojmovi}" />
           <camunda:formField id="apstrakt" label="Apstrakt:" type="string" defaultValue="${apstrakt}" />
-          <camunda:formField id="naucnaOblast2" label="Naucna oblast:" type="string" defaultValue="${naucnaOblast}" />
-          <camunda:formField id="pdf" label="PDF:" type="string" defaultValue="${pdf}" />
           <camunda:formField id="komentarZaAutora" label="Komentar za autora:" type="string" />
           <camunda:formField id="komentarRad" label="Komentar o radu:" type="string" />
           <camunda:formField id="preporukaObj" label="Preporuka za objavljivanje:" type="enum">
@@ -657,23 +472,16 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
           </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>SequenceFlow_1j5iar3</bpmn:incoming>
+      <bpmn:incoming>nePostojiDovoljnoRec</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0vdpbcj</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0vdpbcj" sourceRef="recenziranjeUrednik" targetRef="cuvanjekkk" />
+    <bpmn:sequenceFlow id="SequenceFlow_0vdpbcj" sourceRef="recenziranjeUrednik" targetRef="ExclusiveGateway_1je13h9" />
     <bpmn:exclusiveGateway id="ExclusiveGateway_1je13h9">
-      <bpmn:incoming>SequenceFlow_1nw582w</bpmn:incoming>
-      <bpmn:incoming>SequenceFlow_0h6ljpm</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0vdpbcj</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1dr33pt</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0jap0sm</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_0jap0sm" sourceRef="ExclusiveGateway_1je13h9" targetRef="obradaUrednika" />
-    <bpmn:boundaryEvent id="saticRec" attachedToRef="recenziranje">
-      <bpmn:outgoing>izborNovogRec</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="TimerEventDefinition_0y7qswo">
-        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${rokRec}</bpmn:timeDuration>
-      </bpmn:timerEventDefinition>
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="izborNovogRec" name="vracanje na izbor recenzenata" sourceRef="saticRec" targetRef="obavestavanjeUrednika" />
     <bpmn:sequenceFlow id="SequenceFlow_0jgqmb9" sourceRef="cuvanjeNakonRec" targetRef="ExclusiveGateway_06yr5er" />
     <bpmn:serviceTask id="cuvanjeNakonRec" name="Cuvanje podataka" camunda:expression="${true == true}">
       <bpmn:incoming>SequenceFlow_04b8eax</bpmn:incoming>
@@ -688,11 +496,6 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
     <bpmn:serviceTask id="istekVrIzmOl" name="Odbijanje rada, isteklo je vreme za izmene" camunda:expression="${true == true}">
       <bpmn:incoming>SequenceFlow_1nti8jm</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0jpmgbw</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0h6ljpm" sourceRef="cuvanjekkk" targetRef="ExclusiveGateway_1je13h9" />
-    <bpmn:serviceTask id="cuvanjekkk" name="Cuvanje podataka" camunda:expression="${true == true}">
-      <bpmn:incoming>SequenceFlow_0vdpbcj</bpmn:incoming>
-      <bpmn:outgoing>SequenceFlow_0h6ljpm</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:userTask id="tasktask" name="Pregledanje da li su ispostovani veliki zahtevi" camunda:assignee="${glavniUrednikVar}">
       <bpmn:extensionElements>
@@ -786,6 +589,12 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmn:outgoing>SequenceFlow_0qfscfm</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0qfscfm" sourceRef="mejlUrednikPdf" targetRef="pregledPDF" />
+    <bpmn:sequenceFlow id="SequenceFlow_1yuji39" sourceRef="slanjeMejlaDodeljeni" targetRef="proveraRec" />
+    <bpmn:serviceTask id="slanjeMejlaDodeljeni" name="Slanje mejla dodeljenom uredniku" camunda:class="root.demo.services.AASlanjeMejlaDodeljeniService">
+      <bpmn:incoming>SequenceFlow_14ap3v4</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1yuji39</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1dr33pt" sourceRef="izborDvaRec" targetRef="ExclusiveGateway_1je13h9" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="obrada_teksta_proces">
@@ -933,20 +742,11 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1afad12_di" bpmnElement="dobroFormatiran">
         <di:waypoint x="3040" y="275" />
-        <di:waypoint x="3040" y="420" />
-        <di:waypoint x="3390" y="420" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3016" y="349" width="81" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_0smkl3p_di" bpmnElement="slanjeRec">
-        <dc:Bounds x="3390" y="380" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0y191nz_di" bpmnElement="recenzijaFlow">
-        <di:waypoint x="3560" y="445" />
+        <di:waypoint x="3040" y="540" />
+        <di:waypoint x="3560" y="540" />
         <di:waypoint x="3560" y="680" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="3537" y="526" width="45" height="27" />
+          <dc:Bounds x="2999" y="335" width="81" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1v3f8ei_di" bpmnElement="loseFormatiran">
@@ -998,92 +798,20 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
         <di:waypoint x="3890" y="308" />
         <di:waypoint x="3890" y="380" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="EndEvent_0a4xreh_di" bpmnElement="krajNeceRecenziju">
-        <dc:Bounds x="3722" y="402" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3697" y="445" width="87" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_05efpx4_di" bpmnElement="neceRecenziju">
-        <di:waypoint x="3585" y="420" />
-        <di:waypoint x="3722" y="420" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3619" y="403" width="71" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0vuss2r_di" bpmnElement="ExclusiveGateway_0vuss2r" isMarkerVisible="true">
-        <dc:Bounds x="3535" y="395" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_09ephp2_di" bpmnElement="SequenceFlow_09ephp2">
-        <di:waypoint x="3490" y="420" />
-        <di:waypoint x="3535" y="420" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0777ep4_di" bpmnElement="proveraUrednikNO">
         <dc:Bounds x="3510" y="680" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_152e87y_di" bpmnElement="ExclusiveGateway_152e87y" isMarkerVisible="true">
-        <dc:Bounds x="3535" y="875" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_14ap3v4_di" bpmnElement="SequenceFlow_14ap3v4">
         <di:waypoint x="3560" y="760" />
-        <di:waypoint x="3560" y="875" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1uppsx9_di" bpmnElement="postojiUrednikNO">
-        <di:waypoint x="3585" y="900" />
-        <di:waypoint x="3690" y="900" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3595" y="882" width="88" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0etk2c4_di" bpmnElement="nePostojiUrednikNO">
-        <di:waypoint x="3560" y="925" />
-        <di:waypoint x="3560" y="1020" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="3548" y="970" width="54" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0jbja8q_di" bpmnElement="SequenceFlow_0jbja8q">
-        <di:waypoint x="3790" y="900" />
-        <di:waypoint x="3870" y="900" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0x416ub_di" bpmnElement="automatskiIzborUrednikaNO">
-        <dc:Bounds x="3690" y="860" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1vlf7ym_di" bpmnElement="slanjeNotifikacijeUrednikuNO">
-        <dc:Bounds x="3870" y="860" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_18ytmw2_di" bpmnElement="dodelaPoslaGU">
-        <dc:Bounds x="3510" y="1020" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0raqm1u_di" bpmnElement="ExclusiveGateway_0raqm1u" isMarkerVisible="true">
-        <dc:Bounds x="3895" y="1165" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1l9878w_di" bpmnElement="SequenceFlow_1l9878w">
-        <di:waypoint x="3920" y="940" />
-        <di:waypoint x="3920" y="1165" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1cztgx5_di" bpmnElement="SequenceFlow_1cztgx5">
-        <di:waypoint x="3560" y="1100" />
-        <di:waypoint x="3560" y="1190" />
-        <di:waypoint x="3895" y="1190" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ScriptTask_0e8eaz5_di" bpmnElement="ScriptTask_0e8eaz5">
-        <dc:Bounds x="3970" y="1150" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_120ge1e_di" bpmnElement="SequenceFlow_120ge1e">
-        <di:waypoint x="3945" y="1190" />
-        <di:waypoint x="3970" y="1190" />
+        <di:waypoint x="3560" y="830" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_0f2zfix_di" bpmnElement="ExclusiveGateway_0f2zfix" isMarkerVisible="true">
         <dc:Bounds x="4255" y="1165" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0r2cxfl_di" bpmnElement="SequenceFlow_0r2cxfl">
-        <di:waypoint x="4070" y="1190" />
-        <di:waypoint x="4120" y="1190" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1paxm3b_di" bpmnElement="nePostojiDovoljnoRec">
         <di:waypoint x="4280" y="1215" />
-        <di:waypoint x="4280" y="1350" />
+        <di:waypoint x="4280" y="1390" />
+        <di:waypoint x="4490" y="1390" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="4249" y="1270" width="61" height="40" />
         </bpmndi:BPMNLabel>
@@ -1098,10 +826,6 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmndi:BPMNShape id="UserTask_1xndioz_di" bpmnElement="izborDvaRec">
         <dc:Bounds x="4490" y="1150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0zfqyuo_di" bpmnElement="SequenceFlow_0zfqyuo">
-        <di:waypoint x="4590" y="1190" />
-        <di:waypoint x="4675" y="1190" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0xw0028_di" bpmnElement="SequenceFlow_0xw0028">
         <di:waypoint x="4220" y="1190" />
         <di:waypoint x="4255" y="1190" />
@@ -1109,45 +833,6 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmndi:BPMNShape id="ServiceTask_06r959e_di" bpmnElement="proveraRec">
         <dc:Bounds x="4120" y="1150" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ExclusiveGateway_0k9k2u0_di" bpmnElement="ExclusiveGateway_0k9k2u0" isMarkerVisible="true">
-        <dc:Bounds x="4675" y="1165" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0vn2hnd_di" bpmnElement="gotovUnosRec">
-        <di:waypoint x="4725" y="1190" />
-        <di:waypoint x="4830" y="1190" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4731" y="1176" width="61" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0wjh1iz_di" bpmnElement="trajeUnosRec">
-        <di:waypoint x="4700" y="1165" />
-        <di:waypoint x="4700" y="1100" />
-        <di:waypoint x="4540" y="1100" />
-        <di:waypoint x="4540" y="1150" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4590" y="1082" width="62" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_1m5c9yi_di" bpmnElement="dodelaGlUredRec">
-        <dc:Bounds x="4230" y="1350" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0k2vq3k_di" bpmnElement="obavestavanjeUrednika">
-        <dc:Bounds x="4920" y="1000" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1ms2slx_di" bpmnElement="SequenceFlow_1ms2slx">
-        <di:waypoint x="4920" y="1040" />
-        <di:waypoint x="4020" y="1040" />
-        <di:waypoint x="4020" y="1150" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0whsghb_di" bpmnElement="slanjeRadaDodUred">
-        <dc:Bounds x="5220" y="1280" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1nw582w_di" bpmnElement="SequenceFlow_1nw582w">
-        <di:waypoint x="5320" y="1320" />
-        <di:waypoint x="5405" y="1320" />
-        <di:waypoint x="5405" y="1470" />
-        <di:waypoint x="5205" y="1470" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_1sv9l9h_di" bpmnElement="obradaUrednika">
         <dc:Bounds x="5290" y="1500" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -1301,11 +986,6 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmndi:BPMNShape id="ServiceTask_0dakafx_di" bpmnElement="slanjeRecPregled">
         <dc:Bounds x="5890" y="1090" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1qmc8fb_di" bpmnElement="SequenceFlow_1qmc8fb">
-        <di:waypoint x="5890" y="1110" />
-        <di:waypoint x="4880" y="1110" />
-        <di:waypoint x="4880" y="1150" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0224j9i_di" bpmnElement="konPrih">
         <di:waypoint x="7205" y="1540" />
         <di:waypoint x="7310" y="1540" />
@@ -1408,40 +1088,13 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
         <di:waypoint x="2670" y="250" />
         <di:waypoint x="3015" y="250" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="UserTask_1gsw1oj_di" bpmnElement="UserTask_1gsw1oj">
-        <dc:Bounds x="4830" y="1150" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1b4efko_di" bpmnElement="ServiceTask_1b4efko">
-        <dc:Bounds x="4970" y="1150" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="UserTask_0nxg71o_di" bpmnElement="recenziranje">
-        <dc:Bounds x="5100" y="1149" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_05j01g9_di" bpmnElement="SequenceFlow_05j01g9">
-        <di:waypoint x="5070" y="1190" />
-        <di:waypoint x="5085" y="1190" />
-        <di:waypoint x="5085" y="1189" />
-        <di:waypoint x="5100" y="1189" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_10bi15e_di" bpmnElement="SequenceFlow_10bi15e">
-        <di:waypoint x="4930" y="1190" />
-        <di:waypoint x="4970" y="1190" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1vff83y_di" bpmnElement="SequenceFlow_1vff83y">
-        <di:waypoint x="5150" y="1229" />
-        <di:waypoint x="5150" y="1320" />
-        <di:waypoint x="5220" y="1320" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1j5iar3_di" bpmnElement="SequenceFlow_1j5iar3">
-        <di:waypoint x="4330" y="1390" />
-        <di:waypoint x="4510" y="1390" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_0hfoaj1_di" bpmnElement="recenziranjeUrednik">
-        <dc:Bounds x="4510" y="1350" width="100" height="80" />
+        <dc:Bounds x="4490" y="1350" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0vdpbcj_di" bpmnElement="SequenceFlow_0vdpbcj">
-        <di:waypoint x="4610" y="1390" />
-        <di:waypoint x="4680" y="1390" />
+        <di:waypoint x="4590" y="1390" />
+        <di:waypoint x="5180" y="1390" />
+        <di:waypoint x="5180" y="1445" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ExclusiveGateway_1je13h9_di" bpmnElement="ExclusiveGateway_1je13h9" isMarkerVisible="true">
         <dc:Bounds x="5155" y="1445" width="50" height="50" />
@@ -1450,17 +1103,6 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
         <di:waypoint x="5180" y="1495" />
         <di:waypoint x="5180" y="1540" />
         <di:waypoint x="5290" y="1540" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="BoundaryEvent_1t7djkl_di" bpmnElement="saticRec">
-        <dc:Bounds x="5122" y="1131" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0whatsc_di" bpmnElement="izborNovogRec">
-        <di:waypoint x="5140" y="1131" />
-        <di:waypoint x="5140" y="1040" />
-        <di:waypoint x="5020" y="1040" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="4744" y="1022" width="85" height="27" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0jgqmb9_di" bpmnElement="SequenceFlow_0jgqmb9">
         <di:waypoint x="5560" y="1540" />
@@ -1482,14 +1124,6 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_0nasiaf_di" bpmnElement="istekVrIzmOl">
         <dc:Bounds x="6150" y="1640" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0h6ljpm_di" bpmnElement="SequenceFlow_0h6ljpm">
-        <di:waypoint x="4780" y="1390" />
-        <di:waypoint x="5180" y="1390" />
-        <di:waypoint x="5180" y="1445" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_02bow62_di" bpmnElement="cuvanjekkk">
-        <dc:Bounds x="4680" y="1350" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="UserTask_1ta3ng6_di" bpmnElement="tasktask">
         <dc:Bounds x="6610" y="1090" width="100" height="80" />
@@ -1614,6 +1248,22 @@ task.getExecution().setVariable("odabraniRecenzentiVar", recenzentIds);</camunda
       <bpmndi:BPMNEdge id="SequenceFlow_0qfscfm_di" bpmnElement="SequenceFlow_0qfscfm">
         <di:waypoint x="2670" y="530" />
         <di:waypoint x="2670" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1yuji39_di" bpmnElement="SequenceFlow_1yuji39">
+        <di:waypoint x="3560" y="910" />
+        <di:waypoint x="3560" y="1190" />
+        <di:waypoint x="4120" y="1190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1n0rol1_di" bpmnElement="slanjeMejlaDodeljeni">
+        <dc:Bounds x="3510" y="830" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dr33pt_di" bpmnElement="SequenceFlow_1dr33pt">
+        <di:waypoint x="4590" y="1190" />
+        <di:waypoint x="5270" y="1190" />
+        <di:waypoint x="5270" y="1320" />
+        <di:waypoint x="5405" y="1320" />
+        <di:waypoint x="5405" y="1470" />
+        <di:waypoint x="5205" y="1470" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
