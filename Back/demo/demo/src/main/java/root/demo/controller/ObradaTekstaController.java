@@ -39,11 +39,13 @@ import root.demo.model.Clanarina;
 import root.demo.model.FormFieldsDto;
 import root.demo.model.FormSubmissionDto;
 import root.demo.model.FormSubmissonDTO;
+import root.demo.model.Komentar;
 import root.demo.model.Korisnik;
 import root.demo.model.NaucnaOblastCasopis;
 import root.demo.model.TaskDto;
 import root.demo.repository.CasopisRepository;
 import root.demo.repository.ClanarinaRepository;
+import root.demo.repository.KomentarRepository;
 import root.demo.repository.KorisnikRepository;
 import root.demo.repository.NaucnaOblastCasopisRepository;
 import root.demo.services.ValidacijaService;
@@ -86,6 +88,9 @@ public class ObradaTekstaController
 	
 	@Autowired 
 	ClanarinaRepository clanarinaRepository ;
+	
+	@Autowired
+	KomentarRepository komentarRepository ;
 	
 	// klik na zapocni proces koje stoji gore
 	@GetMapping(path = "/startObradaProcess", produces = "application/json")
@@ -1303,16 +1308,6 @@ public class ObradaTekstaController
 						try{
 							runtimeService.setVariable(processInstanceId, "recenziranjeUrednika", formData);
 							
-							System.out.println("OVDE");
-							List<FormSubmissionDto> reviewingTimeData = (List<FormSubmissionDto>) runtimeService.getVariable(processInstanceId, "recenziranjeUrednika");
-							for(FormSubmissionDto item: reviewingTimeData) {
-								 String fieldId=item.getFieldId();
-								 
-								 if(fieldId.equals("rokIspravke")) { 
-									  System.out.println("Definisani rok za recenziranje : " + item.getFieldValue());
-								 }
-							}
-							
 							formService.submitTaskForm(taskId, map);
 					     				    
 						}catch(FormFieldValidationException e){
@@ -1322,6 +1317,147 @@ public class ObradaTekstaController
 						
 						return new ResponseEntity<>(HttpStatus.OK);
 				    }
+					
+					@GetMapping(path = "/nextTaskOdlukaGlUrednik/{processId}", produces = "application/json")
+				    public @ResponseBody FormFieldsDto nextTaskOdlukaGlUrednik(@PathVariable String processId) {
+
+						List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+						List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+						
+						if(tasks.size()==0){
+							System.out.println("Prazna lista, nema vise taskova");
+						}
+						for(Task T: tasks)
+						{
+							System.out.println("Dodaje task "+T.getName());
+							taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+						}
+						
+						Task nextTask = tasks.get(0);
+						
+						TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+						List<FormField> properties = tfd.getFormFields();
+						
+						// dinamicko ucitavanje
+						List<Komentar> komentari = komentarRepository.findAll();
+						for (FormField fp: properties)
+						{
+							if (fp.getId().equals("konacnaOdlukaZaObjavljivanjeL"))
+							{
+								EnumFormType enumType = (EnumFormType) fp.getType();
+								enumType.getValues().clear();
+								
+								for (Komentar k: komentari)
+								{
+									enumType.getValues().put(k.getId().toString(), k.getVrednost());
+								}
+								break ;
+							}
+						}
+						
+				        return new FormFieldsDto(nextTask.getId(), processId, properties);
+				    }
+					
+					
+					// klik kada izabere casopis, prelazak na servisni task za cuvanje izabranog casopisa
+					@PostMapping(path = "/sacuvajOdlukaGlUrednik/{taskId}", produces = "application/json")
+				    public @ResponseBody ResponseEntity sacuvajOdlukaGlUrednik(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
+						
+						HashMap<String, Object> map = this.mapListToDto(formData);
+						Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+						String processInstanceId = task.getProcessInstanceId();
+						
+						try{
+							runtimeService.setVariable(processInstanceId, "odlukaGlUrednik", formData);
+							
+							List<FormSubmissonDTO> odlukaGlUrednikForm = (List<FormSubmissonDTO>)runtimeService.getVariable(processInstanceId, "odlukaGlUrednik");
+							 
+							 for(FormSubmissonDTO item: odlukaGlUrednikForm)
+							  {
+								  String fieldId=item.getFieldId();
+								  
+								 if(fieldId.equals("konacnaOdlukaZaObjavljivanjeL")){
+									 System.out.println("Nasao polje");
+									  
+									  List<Komentar> komentari = komentarRepository.findAll();
+									  for(Komentar c : komentari){
+										  for(String selectedEd:item.getCategories())
+										  {
+											  String idDecision= c.getId().toString();
+											  
+											  System.out.println("selected je: " + selectedEd);
+											  System.out.println("casopis is je: " + c.getId().toString());
+											  if(idDecision.equals(selectedEd)){
+											
+												  System.out.println("Vrednost komentarVar je: " + c.getVrednost());
+												  runtimeService.setVariable(processInstanceId, "komentarVar", c.getVrednost());
+												  break ;
+												  
+											  }
+										  }
+									  }
+								 }
+								 
+							  }
+
+							formService.submitTaskForm(taskId, map);
+							
+										    
+						}catch(FormFieldValidationException e){
+							return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+						}
+						return new ResponseEntity<>(HttpStatus.OK);
+				    }
+					
+					// ucitavanje forme gde urednik pregleda ono uneseno o radu
+					 @GetMapping(path = "/sledeciTaskVrIspUrednik/{processId}", produces = "application/json")
+					    public @ResponseBody FormFieldsDto sledeciTaskVrIspUrednik(@PathVariable String processId) {
+
+							List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+							List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+							
+							if(tasks.size()==0){
+								System.out.println("Prazna lista, nema vise taskova");
+							}
+							for(Task T: tasks)
+							{
+								System.out.println("Dodaje task "+T.getName());
+								taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+							}
+							
+							Task nextTask = tasks.get(0);
+							
+							TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+							List<FormField> properties = tfd.getFormFields();
+
+					        return new FormFieldsDto(nextTask.getId(), processId, properties);
+					    }
+						
+					 	// urednik nakon sto pregleda rad i klikne na submit
+						@PostMapping(path = "/sacuvajVrIspUrednika/{taskId}", produces = "application/json")
+					    public @ResponseBody ResponseEntity sacuvajVrIspUrednika(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
+							
+							HashMap<String, Object> map = this.mapListToDto(formData);
+							Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+							String processInstanceId = task.getProcessInstanceId();
+							
+							TaskFormData tfd = formService.getTaskFormData(taskId);
+							List<FormField> formFields = tfd.getFormFields();
+										
+							try{
+								runtimeService.setVariable(processInstanceId, "vremeIspravkeUrednik", formData);
+								
+								formService.submitTaskForm(taskId, map);
+						     				    
+							}catch(FormFieldValidationException e){
+								return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+							}
+							
+							
+							return new ResponseEntity<>(HttpStatus.OK);
+					    }
+
+								
 					
 		@GetMapping(path = "/casopisDalje/{processId}", produces = "application/json")
 		public ResponseEntity<Boolean> casopisDalje(@PathVariable String processId)

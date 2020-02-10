@@ -25,7 +25,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 
 @Service
-public class AASlanjeMejlaIstekloTehnickiService implements JavaDelegate
+public class AASlanjeMejlaItsekloDoradaService implements JavaDelegate
 {
 	@Autowired
 	private JavaMailSender javaMailSender;
@@ -63,10 +63,10 @@ public class AASlanjeMejlaIstekloTehnickiService implements JavaDelegate
 		MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false, "utf-8");
 
 		//String htmlMsg = "<h3>Pozdrav "+k.getIme()+"</h3><br> <p>Da biste aktivirali profil posetite  <a href=\"http://localhost:4200/afterEmail/"+ k.getEmail() + "/" + processInstanceId + "\">link</a></p>";
-		String htmlMsg = "<h3>Pozdrav "+k.getIme()+",</h3><br> <p>Obavestavamo Vas da je isteklo vreme za ispravku, pa je rad odbijen iz tehnickih razloga i proces se terminira!</p>";
+		String htmlMsg = "<h3>Pozdrav "+k.getIme()+",</h3><br> <p>Obavestavamo Vas da je isteklo vreme za doradu, pa se proces terminira!</p>";
 		mimeMessage.setContent(htmlMsg, "text/html");
 		helper.setTo(k.getEmail());
-		helper.setSubject("Obavestenje o terminaciji procesa iz tehnickih razloga");
+		helper.setSubject("Obavestenje o terminaciji procesa, jer je isteklo vreme za doradu");
 		helper.setFrom(env.getProperty("spring.mail.username"));
 		javaMailSender.send(mimeMessage);
 	

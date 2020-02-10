@@ -36,7 +36,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 
 @Service
-public class AASlanjeMejlaAutorIspService implements JavaDelegate{
+public class AASlanjeMejlaDoradaUrednikPdfService implements JavaDelegate {
 	@Autowired
 	private JavaMailSender javaMailSender;
 	
@@ -56,15 +56,13 @@ public class AASlanjeMejlaAutorIspService implements JavaDelegate{
 	public void execute(DelegateExecution execution) throws Exception {
 		// TODO Auto-generated method stub
 		  
-		  String autorUsername = (String) execution.getVariable("autor");
-	      System.out.println("Slanje mejla autor username je: " + autorUsername);
-	      Korisnik autor = korisnikRepository.findOneByUsername(autorUsername);
+		  Korisnik urednik = getCurrentUser();
 	      
 	      String processInstanceId = execution.getProcessInstanceId();
 	      String fileName = (String) execution.getVariable("pdfFileName");
 	      byte[] decodedBytes = (byte[]) execution.getVariable("pdfRad");
 	     
-	      //sendNotificaitionAsync(autor, processInstanceId, fileName, decodedBytes);      
+	      //sendNotificaitionAsync(urednik, processInstanceId, fileName, decodedBytes);      
 	}
 	
 	
@@ -72,7 +70,7 @@ public class AASlanjeMejlaAutorIspService implements JavaDelegate{
 	public void sendNotificaitionAsync(Korisnik k, String processInstanceId, String fileName, byte[] decodedBytes) throws MailException, InterruptedException, MessagingException {
 
 		System.out.println("Slanje emaila...");
-		String content = "Neophodno je da ispravite pdf koji ste prilozili prilikom unosa informacija u radu!";
+		String content = "Odlucili ste da je rad tematski prihvatljiv, sada je neophodno pregledati pdf i odluciti da li je dobro formatiran!";
 		
 	    ByteArrayOutputStream outputStream = null;
 
@@ -101,7 +99,7 @@ public class AASlanjeMejlaAutorIspService implements JavaDelegate{
 			String htmlMsg = "<h3>Pozdrav "+k.getIme()+",</h3><br> <p>Obavestavamo Vas da je neophodno da rad koji ste prilozili ispravite u najkracem mogucem roku!</p>";
 			mimeMessage.setContent(mimeMultipart, "text/html");
 			helper.setTo(k.getEmail());
-			helper.setSubject("Obavestenje o vracanju poslatog rada na doradu");
+			helper.setSubject("Obavestenje o pristizanju novog rada na pregled");
 			helper.setFrom(env.getProperty("spring.mail.username"));
 			javaMailSender.send(mimeMessage);
 		

@@ -31,6 +31,9 @@ import {AKrajTematskiNeprihvatljivComponent} from './a-kraj-tematski-neprihvatlj
 import {AIzborRecenzenataComponent} from './a-izbor-recenzenata/a-izbor-recenzenata.component';
 import {ARecenziranjeUrednikComponent} from './a-recenziranje-urednik/a-recenziranje-urednik.component';
 import {APlacanjeClanarineComponent} from './a-placanje-clanarine/a-placanje-clanarine.component';
+import {AKonacnaOdlukaUrednikComponent} from './a-konacna-odluka-urednik/a-konacna-odluka-urednik.component';
+import {AVremeIspravkeUrednikComponent} from './a-vreme-ispravke-urednik/a-vreme-ispravke-urednik.component';
+import {AAutorManjaVecaDoradaComponent} from './a-autor-manja-veca-dorada/a-autor-manja-veca-dorada.component';
 
 const routes: Routes = [
 
@@ -68,7 +71,13 @@ const routes: Routes = [
   { path: 'krajTematskiNeprihvatljiv', component: AKrajTematskiNeprihvatljivComponent},
   { path: 'izborRecenzenata/:processInstanceId/:taskId', component: AIzborRecenzenataComponent },
   { path: 'recenziranjeGlUrednik/:processInstanceId/:taskId', component: ARecenziranjeUrednikComponent },
-  { path: 'placanjeClanarine/:processInstanceId', component: APlacanjeClanarineComponent }
+  { path: 'placanjeClanarine/:processInstanceId', component: APlacanjeClanarineComponent },
+  { path: 'konacnaOdlukaUrednik/:processInstanceId', component: AKonacnaOdlukaUrednikComponent },
+  { path: 'vremeIspUrednik/:processInstanceId/:taskId', component: AVremeIspravkeUrednikComponent },
+  { path: 'autorMVDorada/:processInstanceId/:taskId', component: AAutorManjaVecaDoradaComponent }
+
+
+
 
 
 

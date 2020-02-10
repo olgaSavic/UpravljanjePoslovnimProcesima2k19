@@ -1,0 +1,46 @@
+<div class="midDiv">
+  <h3>Izbor vremena u kom ce korisnik moci da vrsi doradu</h3>
+</div>
+<div fxLayout="row" fxLayoutAlign="center center">
+  <div fxLex="25%">
+  </div>
+  <div fxLex="50%">
+    <form #f="ngForm" (ngSubmit)="onSubmit(f.value, f)" ngNativeValidate>
+      <div *ngFor="let field of formFields" >
+        <label for={{field.id}}>{{field.label}}</label>
+
+        <div *ngIf="field.type.name == 'string'">
+          <h6>
+            <p>Iskoristite neku od ponudjenih vrednosti: </p>
+            PT3M = 3 minuta
+            <br/>
+            PT5M = 5 minuta
+            <br/>
+            PT10M = 10 minuta
+          </h6>
+        </div>
+
+        <input type="text" name={{field.id}} ngModel  *ngIf="field.type.name=='string'" >
+        <input type="checkbox" name={{field.id}} ngModel  *ngIf="field.type.name=='boolean'">
+        <input type="number" name={{field.id}} ngModel  *ngIf="field.type.name=='long'">
+
+
+        <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum'">
+          <option *ngFor="let val of enumValues" value={{val}}>
+            {{field.type.values[val]}}
+          </option>
+        </select>
+
+
+      </div>
+      <br>
+      <div>&nbsp;
+        <input type="submit">
+      </div>
+
+    </form>
+  </div>
+
+  <div fxLex="25%">
+  </div>
+</div>

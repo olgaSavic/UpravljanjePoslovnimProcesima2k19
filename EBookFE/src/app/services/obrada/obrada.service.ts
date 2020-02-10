@@ -103,6 +103,15 @@ export class ObradaService {
       window.location.href = 'izmenaRadaAutor/' + processId + '/' + task.taskId;
 
     }
+    else if (task.name === 'Unos roka za ispravljanje')
+    {
+      window.location.href = 'vremeIspUrednik/' + processId + '/' + task.taskId;
+
+    }
+    else if (task.name === 'Prikaz komentara recenzenata zbog dorade')
+    {
+      window.location.href = 'autorMVDorada/' + processId + '/' + task.taskId;
+    }
     else { // nema vise taskova
       window.location.href = 'krajTematskiNeprihvatljiv';
     }
@@ -188,4 +197,23 @@ export class ObradaService {
     return this.httpClient.get('http://localhost:8080/obrada/casopisDalje/'.concat(processId)) as Observable<any>;
   }
 
+  // ----------------------------------------------
+  nextTaskOdlukaGlUrednik(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/nextTaskOdlukaGlUrednik/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajOdlukaGlUrednik(casopis, taskId) {
+    console.log(casopis);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajOdlukaGlUrednik/'.concat(taskId), casopis) as Observable<any>;
+  }
+
+  // ----------------------------------------------
+  sledeciTaskVrIspUrednik(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskVrIspUrednik/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajVrIspUrednika(casopis, taskId) {
+    console.log(casopis);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajVrIspUrednika/'.concat(taskId), casopis) as Observable<any>;
+  }
 }

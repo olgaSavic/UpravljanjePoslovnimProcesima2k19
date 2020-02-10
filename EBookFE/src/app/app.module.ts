@@ -53,6 +53,9 @@ import { AKrajTematskiNeprihvatljivComponent } from './a-kraj-tematski-neprihvat
 import { AIzborRecenzenataComponent } from './a-izbor-recenzenata/a-izbor-recenzenata.component';
 import { ARecenziranjeUrednikComponent } from './a-recenziranje-urednik/a-recenziranje-urednik.component';
 import { APlacanjeClanarineComponent } from './a-placanje-clanarine/a-placanje-clanarine.component';
+import { AKonacnaOdlukaUrednikComponent } from './a-konacna-odluka-urednik/a-konacna-odluka-urednik.component';
+import { AVremeIspravkeUrednikComponent } from './a-vreme-ispravke-urednik/a-vreme-ispravke-urednik.component';
+import { AAutorManjaVecaDoradaComponent } from './a-autor-manja-veca-dorada/a-autor-manja-veca-dorada.component';
 
 
 const ChildRoutes =
@@ -109,7 +112,10 @@ const Routes = [
     AKrajTematskiNeprihvatljivComponent,
     AIzborRecenzenataComponent,
     ARecenziranjeUrednikComponent,
-    APlacanjeClanarineComponent
+    APlacanjeClanarineComponent,
+    AKonacnaOdlukaUrednikComponent,
+    AVremeIspravkeUrednikComponent,
+    AAutorManjaVecaDoradaComponent
 
   ],
   imports: [

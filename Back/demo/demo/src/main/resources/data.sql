@@ -57,3 +57,13 @@ insert into db_new.clanarina(id, aktivna, korisnik_id, casopis_id)
 	values(100, true, 900, 300);
 insert into db_new.clanarina(id, aktivna, korisnik_id, casopis_id)
 	values(200, true, 1000, 200);
+	
+insert into db_new.komentar(id, vrednost)
+	values(100, "prihvatiti");
+insert into db_new.komentar(id, vrednost)
+	values(200, "prihvatiti uz manju doradu");
+insert into db_new.komentar(id, vrednost)
+	values(300, "prihvatiti uz vecu doradu");
+insert into db_new.komentar(id, vrednost)
+	values(400, "odbiti");
+		

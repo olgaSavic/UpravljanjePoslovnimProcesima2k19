@@ -99,7 +99,7 @@ public class AASlanjeMejlaUrednikPdfService implements JavaDelegate {
 			String htmlMsg = "<h3>Pozdrav "+k.getIme()+",</h3><br> <p>Obavestavamo Vas da je neophodno da rad koji ste prilozili ispravite u najkracem mogucem roku!</p>";
 			mimeMessage.setContent(mimeMultipart, "text/html");
 			helper.setTo(k.getEmail());
-			helper.setSubject("Obavestenje o vracanju poslatog rada na doradu");
+			helper.setSubject("Obavestenje o pristizanju novog rada na pregled");
 			helper.setFrom(env.getProperty("spring.mail.username"));
 			javaMailSender.send(mimeMessage);
 		

@@ -1,18 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {UserService} from '../services/users/user.service';
-import {NaucnaOblastService} from '../services/naucna-oblast/naucna-oblast.service';
-import {RepositoryService} from '../services/repository/repository.service';
-import {ObradaService} from '../services/obrada/obrada.service';
 import {AuthService} from '../services/auth/auth.service';
+import {ObradaService} from '../services/obrada/obrada.service';
 
 @Component({
-  selector: 'app-a-izbor-recenzenata',
-  templateUrl: './a-izbor-recenzenata.component.html',
-  styleUrls: ['./a-izbor-recenzenata.component.css']
+  selector: 'app-a-vreme-ispravke-urednik',
+  templateUrl: './a-vreme-ispravke-urednik.component.html',
+  styleUrls: ['./a-vreme-ispravke-urednik.component.css']
 })
-export class AIzborRecenzenataComponent implements OnInit {
-
+export class AVremeIspravkeUrednikComponent implements OnInit {
   private formFieldsDto = null;
   private formFields = [];
   private processId = '';
@@ -32,7 +28,7 @@ export class AIzborRecenzenataComponent implements OnInit {
     const processInstanceId = this.route.snapshot.params.processInstanceId ;
     this.processInstance = processInstanceId;
 
-    const x = obradaService.sledeciTaskIzborRec(processInstanceId);
+    const x = obradaService.sledeciTaskVrIspUrednik(processInstanceId);
     x.subscribe(
       res => {
         console.log(res);
@@ -49,15 +45,6 @@ export class AIzborRecenzenataComponent implements OnInit {
 
         });
 
-        /*
-        this.obradaService.getRecenzentiCasopis(this.processInstance).subscribe(
-          pom => {
-            console.log('Ispis recenzenata');
-            console.log(pom);
-            this.reviewers = pom;
-          }
-        );
-        */
 
       },
       err => {
@@ -92,23 +79,18 @@ export class AIzborRecenzenataComponent implements OnInit {
     // tslint:disable-next-line:forin
     for (const property in value) {
 
-      if (property != 'recenzentiL') {
-        o.push({fieldId : property, fieldValue : value[property]});
-      } else {
-        o.push({fieldId : property, categories : value[property]});
-
-      }
-        console.log(o);
+      console.log(o);
 
       if(value[property]=="PT10M" || value[property]=="PT5M" || value[property]=="PT3M") {
         o.push({fieldId: property, fieldValue: value[property]});
         console.log(o);
-        let x = this.obradaService.sacuvajIzborRec(o, this.formFieldsDto.taskId);
+        let x = this.obradaService.sacuvajVrIspUrednika(o, this.formFieldsDto.taskId);
 
         x.subscribe(
           res => {
-            alert("Zadato je vreme za recenziranje");
-            this.router.navigateByUrl('konacnaOdlukaUrednik/' + this.processInstance);
+            alert("Zadato je vreme za manju ili vecu doradu rada");
+            // treba da se loguje autor, da bi video komentare itd.
+            this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
           },
           err => {
             console.log("Error occured");
@@ -116,36 +98,6 @@ export class AIzborRecenzenataComponent implements OnInit {
         );
       }
     }
-
-  }
-
-  filtriraj()
-  {
-
-    const x = this.obradaService.sledeciTaskIzborFiltriranihRec(this.processInstance);
-
-    x.subscribe(
-      res => {
-        console.log(res);
-        this.formFieldsDto = res;
-        this.formFields = res.formFields;
-        console.log(this.formFields);
-        this.formFields.forEach( (field) =>{
-
-
-          if( field.type.name=='enum' && field.id == 'recenzentiL'){
-            this.enumValues = Object.keys(field.type.values);
-            this.reviewers = Object.keys(field.type.values);
-          }
-          else if( field.type.name=='enum' && field.id != 'recenzentiL'){
-            this.enumValues2 = Object.keys(field.type.values);
-          }
-        });
-      },
-      err => {
-        console.log('Error occured');
-      }
-    );
 
   }
 
