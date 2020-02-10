@@ -228,15 +228,11 @@
     <bpmn:sequenceFlow id="postojiDvaRec" name="postoji MIN dva recenzenta" sourceRef="ExclusiveGateway_0f2zfix" targetRef="izborDvaRec">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${brojRecenzenataVar &gt;= 2}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:userTask id="izborDvaRec" name="Izbor recenzenata i zadavanje roka ispravke:" camunda:assignee="${dodeljeniUrednik}">
+    <bpmn:userTask id="izborDvaRec" name="Izbor recenzenata i zadavanje roka recenziranja:" camunda:assignee="${dodeljeniUrednik}">
       <bpmn:extensionElements>
         <camunda:formData>
           <camunda:formField id="recenzentiL" label="Izaberite minimum dva recenzenta:" type="enum" />
-          <camunda:formField id="rokIspravke" label="Rok ispravke rada:" type="enum">
-            <camunda:value id="PT1M" name="PT1M" />
-            <camunda:value id="PT2M" name="PT2M" />
-            <camunda:value id="PT5M" name="PT5M" />
-          </camunda:formField>
+          <camunda:formField id="rokIspravke" label="Rok za recenziranje:" type="string" />
         </camunda:formData>
       </bpmn:extensionElements>
       <bpmn:incoming>postojiDvaRec</bpmn:incoming>

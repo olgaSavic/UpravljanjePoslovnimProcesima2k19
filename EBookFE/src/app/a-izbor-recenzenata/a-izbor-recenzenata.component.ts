@@ -42,13 +42,11 @@ export class AIzborRecenzenataComponent implements OnInit {
 
         this.formFields.forEach( (field) =>{
 
-          if( field.type.name=='enum' && field.id == 'recenzentiL'){
+          if( field.type.name=='enum'){
             this.enumValues = Object.keys(field.type.values);
             this.reviewers = Object.keys(field.type.values);
           }
-          else {
-            this.enumValues2 = Object.keys(field.type.values);
-          }
+
         });
 
         /*
@@ -94,22 +92,31 @@ export class AIzborRecenzenataComponent implements OnInit {
     // tslint:disable-next-line:forin
     for (const property in value) {
 
+      if (property != 'recenzentiL') {
+        o.push({fieldId : property, fieldValue : value[property]});
+      } else {
         o.push({fieldId : property, categories : value[property]});
+
+      }
         console.log(o);
+
+      if(value[property]=="PT10M" || value[property]=="PT5M" || value[property]=="PT3M") {
+        o.push({fieldId: property, fieldValue: value[property]});
+        console.log(o);
+        let x = this.obradaService.sacuvajIzborRec(o, this.formFieldsDto.taskId);
+
+        x.subscribe(
+          res => {
+            alert("Zadato je vreme za recenziranje");
+            this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
+          },
+          err => {
+            console.log("Error occured");
+          }
+        );
+      }
     }
 
-    let x = this.obradaService.sacuvajIzborRec(o, this.formFieldsDto.taskId);
-    console.log('Pre subscribe');
-    x.subscribe(
-      res => {
-        console.log(res);
-        alert('Izvrsen je uspesan izbor recenzenata!');
-        this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
-      },
-      err => {
-        console.log('Error occured');
-      }
-    );
   }
 
   filtriraj()
@@ -129,7 +136,8 @@ export class AIzborRecenzenataComponent implements OnInit {
           if( field.type.name=='enum' && field.id == 'recenzentiL'){
             this.enumValues = Object.keys(field.type.values);
             this.reviewers = Object.keys(field.type.values);
-          } else {
+          }
+          else if( field.type.name=='enum' && field.id != 'recenzentiL'){
             this.enumValues2 = Object.keys(field.type.values);
           }
         });

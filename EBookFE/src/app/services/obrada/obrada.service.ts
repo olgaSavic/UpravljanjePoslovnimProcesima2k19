@@ -86,12 +86,11 @@ export class ObradaService {
   completeTask(processId: string, task) {
     console.log(task.name);
     console.log(task.taskId);
-    alert(task.name);
     if (task.name === 'Obrada rada') // ukoliko se nalazi na urednikovom tasku obrada rada
     {
       window.location.href = 'pregledRadaUrednik/' + processId + '/' + task.taskId;
     }
-    else if (task.name === 'Izbor dva recenzenta') // ukoliko je dosao do taska za izbor dva recenzenta
+    else if (task.name === 'Izbor recenzenata i zadavanje roka recenziranja:') // ukoliko je dosao do taska za izbor dva recenzenta
     {
       window.location.href = 'izborRecenzenata/' +  processId + '/' + task.taskId;
     }

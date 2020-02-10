@@ -8,6 +8,18 @@
     <form #f="ngForm" (ngSubmit)="onSubmit(f.value, f)" ngNativeValidate>
       <div *ngFor="let field of formFields" >
         <label for={{field.id}}>{{field.label}}</label>
+
+        <div *ngIf="field.type.name == 'string'">
+          <h6>
+            <p>Iskoristite neku od ponudjenih vrednosti: </p>
+            PT3M = 3 minuta
+            <br/>
+            PT5M = 5 minuta
+            <br/>
+            PT10M = 10 minuta
+          </h6>
+        </div>
+
         <input type="text" name={{field.id}} ngModel  *ngIf="field.type.name=='string'" >
         <input type="checkbox" name={{field.id}} ngModel  *ngIf="field.type.name=='boolean'">
         <input type="number" name={{field.id}} ngModel  *ngIf="field.type.name=='long'">
@@ -19,13 +31,6 @@
           </option>
         </select>
 
-
-
-        <select name="{{field.id}}"  multiple ngModel *ngIf="field.type.name=='enum' && field.id != 'recenzentiL' ">
-          <option *ngFor="let val2 of enumValues2" value={{val2}}>
-            {{field.type.values[val2]}}
-          </option>
-        </select>
 
       </div>
       <br>

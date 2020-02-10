@@ -1302,11 +1302,24 @@ public class ObradaTekstaController
 									
 						try{
 							runtimeService.setVariable(processInstanceId, "recenziranjeUrednika", formData);
+							
+							System.out.println("OVDE");
+							List<FormSubmissionDto> reviewingTimeData = (List<FormSubmissionDto>) runtimeService.getVariable(processInstanceId, "recenziranjeUrednika");
+							for(FormSubmissionDto item: reviewingTimeData) {
+								 String fieldId=item.getFieldId();
+								 
+								 if(fieldId.equals("rokIspravke")) { 
+									  System.out.println("Definisani rok za recenziranje : " + item.getFieldValue());
+								 }
+							}
+							
 							formService.submitTaskForm(taskId, map);
 					     				    
 						}catch(FormFieldValidationException e){
 							return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 						}
+						
+						
 						return new ResponseEntity<>(HttpStatus.OK);
 				    }
 					
