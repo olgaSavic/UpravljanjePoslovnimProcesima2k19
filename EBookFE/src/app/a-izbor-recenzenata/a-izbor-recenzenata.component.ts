@@ -108,7 +108,7 @@ export class AIzborRecenzenataComponent implements OnInit {
         x.subscribe(
           res => {
             alert("Zadato je vreme za recenziranje");
-            this.router.navigateByUrl('konacnaOdlukaUrednik/' + this.processInstance);
+            this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
           },
           err => {
             console.log("Error occured");

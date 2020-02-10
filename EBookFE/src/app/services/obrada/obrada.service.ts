@@ -112,6 +112,17 @@ export class ObradaService {
     {
       window.location.href = 'autorMVDorada/' + processId + '/' + task.taskId;
     }
+
+
+    else if (task.name === 'Pregledanje da li su ispostovani zahtevi')
+    {
+      window.location.href = 'aaUrednikIsp/' + processId + '/' + task.taskId;
+    }
+    else if (task.name === 'Ponovne ispravke autora')
+    {
+      window.location.href = 'aaAutorIsp/' + processId + '/' + task.taskId;
+    }
+
     else { // nema vise taskova
       window.location.href = 'krajTematskiNeprihvatljiv';
     }
@@ -215,5 +226,30 @@ export class ObradaService {
   sacuvajVrIspUrednika(casopis, taskId) {
     console.log(casopis);
     return this.httpClient.post('http://localhost:8080/obrada/sacuvajVrIspUrednika/'.concat(taskId), casopis) as Observable<any>;
+  }
+
+  // ------------------------------------------------
+  doradaDalje(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/doradaDalje/'.concat(processId)) as Observable<any>;
+  }
+
+  // ------------------------------------------------
+  sledeciTaskIspZahteviUrednik(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskIspZahteviUrednik/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajIspZahteveUrednika(rad, taskId) {
+    console.log(rad);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajIspZahteveUrednika/'.concat(taskId), rad) as Observable<any>;
+  }
+
+  // ------------------------------------------------
+  sledeciTaskPonovoIspAutor(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskPonovoIspAutor/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajPonIspAutorPdf(rad, taskId) {
+    console.log(rad);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajPonIspAutorPdf/'.concat(taskId), rad) as Observable<any>;
   }
 }

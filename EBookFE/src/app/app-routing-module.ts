@@ -34,6 +34,10 @@ import {APlacanjeClanarineComponent} from './a-placanje-clanarine/a-placanje-cla
 import {AKonacnaOdlukaUrednikComponent} from './a-konacna-odluka-urednik/a-konacna-odluka-urednik.component';
 import {AVremeIspravkeUrednikComponent} from './a-vreme-ispravke-urednik/a-vreme-ispravke-urednik.component';
 import {AAutorManjaVecaDoradaComponent} from './a-autor-manja-veca-dorada/a-autor-manja-veca-dorada.component';
+import {AKrajPotvrdjenComponent} from './a-kraj-potvrdjen/a-kraj-potvrdjen.component';
+import {AKrajOdbijenComponent} from './a-kraj-odbijen/a-kraj-odbijen.component';
+import {AAUrednikIspComponent} from './a-a-urednik-isp/a-a-urednik-isp.component';
+import {AAAutorNovaIspComponent} from './a-a-autor-nova-isp/a-a-autor-nova-isp.component';
 
 const routes: Routes = [
 
@@ -74,7 +78,12 @@ const routes: Routes = [
   { path: 'placanjeClanarine/:processInstanceId', component: APlacanjeClanarineComponent },
   { path: 'konacnaOdlukaUrednik/:processInstanceId', component: AKonacnaOdlukaUrednikComponent },
   { path: 'vremeIspUrednik/:processInstanceId/:taskId', component: AVremeIspravkeUrednikComponent },
-  { path: 'autorMVDorada/:processInstanceId/:taskId', component: AAutorManjaVecaDoradaComponent }
+  { path: 'autorMVDorada/:processInstanceId/:taskId', component: AAutorManjaVecaDoradaComponent },
+  { path: 'krajPotvrdjen', component: AKrajPotvrdjenComponent },
+  { path: 'krajOdbijen', component: AKrajOdbijenComponent },
+  { path: 'aaUrednikIsp/:processInstanceId/:taskId', component: AAUrednikIspComponent },
+  { path: 'aaAutorIsp/:processInstanceId/:taskId', component: AAAutorNovaIspComponent }
+
 
 
 

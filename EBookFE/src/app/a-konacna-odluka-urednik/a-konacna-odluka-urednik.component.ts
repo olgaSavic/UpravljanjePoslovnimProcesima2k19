@@ -78,7 +78,6 @@ export class AKonacnaOdlukaUrednikComponent implements OnInit {
     x.subscribe(
       res => {
         console.log(res);
-
         this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
 
 
@@ -87,6 +86,30 @@ export class AKonacnaOdlukaUrednikComponent implements OnInit {
         console.log("Doslo je do greske");
       }
     );
+
+    /*
+    let nova = this.obradaService.doradaDalje(this.processInstance);
+    nova.subscribe(olga => {
+
+      alert("USAO")!
+      alert(olga.povratna);
+      alert(olga);
+      if (olga == "kraj")
+      {
+        this.router.navigateByUrl('krajPotvrdjen');
+
+      }
+      else if (olga == "odbiti")
+      {
+        this.router.navigateByUrl('krajOdbijen');
+      }
+      else { // manja ili veca dorada
+        this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
+      }
+    })
+
+    */
+
   }
 
 

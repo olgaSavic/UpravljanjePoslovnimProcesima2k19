@@ -1518,6 +1518,130 @@ public class ObradaTekstaController
 			 
 	
 		}
+		
+		@GetMapping(path = "/doradaDalje/{processId}", produces = "application/json")
+		public ResponseEntity<String> doradaDalje(@PathVariable String processId)
+		{
+			String povratna = "";
+			
+			povratna = (String)  runtimeService.getVariable(processId, "komentarVar");
+			System.out.println("Povratna je: " + povratna);
+			
+			if (povratna != "") {
+				return new ResponseEntity<String>(povratna, HttpStatus.OK);
+			}
+			else
+			{
+				povratna = "kraj";
+				return new ResponseEntity<String>(povratna, HttpStatus.OK);
+			}
+			
+		
+
+			
+		}
+		
+		
+		 // ucitavanje forme gde urednik pregleda ono uneseno o radu
+		 @GetMapping(path = "/sledeciTaskIspZahteviUrednik/{processId}", produces = "application/json")
+		    public @ResponseBody FormFieldsDto sledeciTaskIspZahteviUrednik(@PathVariable String processId) {
+
+				List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+				List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+				
+				if(tasks.size()==0){
+					System.out.println("Prazna lista, nema vise taskova");
+				}
+				for(Task T: tasks)
+				{
+					System.out.println("Dodaje task "+T.getName());
+					taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+				}
+				
+				Task nextTask = tasks.get(0);
+				
+				TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+				List<FormField> properties = tfd.getFormFields();
+
+		        return new FormFieldsDto(nextTask.getId(), processId, properties);
+		    }
+			
+		 	// urednik nakon sto pregleda rad i klikne na submit
+			@PostMapping(path = "/sacuvajIspZahteveUrednika/{taskId}", produces = "application/json")
+		    public @ResponseBody ResponseEntity sacuvajIspZahteveUrednika(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
+				
+				HashMap<String, Object> map = this.mapListToDto(formData);
+				Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+				String processInstanceId = task.getProcessInstanceId();
+				
+				TaskFormData tfd = formService.getTaskFormData(taskId);
+				List<FormField> formFields = tfd.getFormFields();
+							
+				try{
+					runtimeService.setVariable(processInstanceId, "ispZahteviUrednika", formData);
+					formService.submitTaskForm(taskId, map);
+			     				    
+				}catch(FormFieldValidationException e){
+					return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+				}
+				return new ResponseEntity<>(HttpStatus.OK);
+		    }
+		
+		
+			
+			@GetMapping(path = "/sledeciTaskPonovoIspAutor/{processId}", produces = "application/json")
+		    public @ResponseBody FormFieldsDto sledeciTaskPonovoIspAutor(@PathVariable String processId) {
+
+				List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+				List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+				
+				if(tasks.size()==0){
+					System.out.println("Prazna lista, nema vise taskova");
+				}
+				for(Task T: tasks)
+				{
+					System.out.println("Dodaje task "+T.getName());
+					taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+				}
+				
+				Task nextTask = tasks.get(0);
+				
+				TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+				List<FormField> properties = tfd.getFormFields();
+
+		        return new FormFieldsDto(nextTask.getId(), processId, properties);
+		    }
+
+			
+			@PostMapping(path = "/sacuvajPonIspAutorPdf/{taskId}", produces = "application/json")
+		    public @ResponseBody ResponseEntity sacuvajPonIspAutorPdf(@RequestBody FormSubmissionWithFileDto dto, @PathVariable String taskId) throws IOException {
+				System.out.println("Usao u sacuvaj rad sa pdf!");
+				HashMap<String, Object> map = this.mapListToDto(dto.getForm());
+				Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+				String processInstanceId = task.getProcessInstanceId();
+				
+				runtimeService.setVariable(processInstanceId, "infoRad", dto.getForm()); 
+				formService.submitTaskForm(taskId, map);
+				
+				BASE64Decoder decoder = new BASE64Decoder();
+				byte[] decodedBytes = decoder.decodeBuffer(dto.getFile());
+
+				File file = new File("pdf/" + dto.getFileName());
+				
+				runtimeService.setVariable(processInstanceId, "pdfRad", decodedBytes); 
+				runtimeService.setVariable(processInstanceId, "pdfFileName", dto.getFileName()); 
+				
+				System.out.println("U varijablu je sacuvan rad sa nazivom: " + dto.getFileName());
+				FileOutputStream fop = new FileOutputStream(file);
+
+				fop.write(decodedBytes);
+				fop.flush();
+				fop.close();
+				
+		        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+		    }
+
+		
 				 
 
 }

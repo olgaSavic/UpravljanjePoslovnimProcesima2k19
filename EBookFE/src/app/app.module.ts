@@ -56,6 +56,10 @@ import { APlacanjeClanarineComponent } from './a-placanje-clanarine/a-placanje-c
 import { AKonacnaOdlukaUrednikComponent } from './a-konacna-odluka-urednik/a-konacna-odluka-urednik.component';
 import { AVremeIspravkeUrednikComponent } from './a-vreme-ispravke-urednik/a-vreme-ispravke-urednik.component';
 import { AAutorManjaVecaDoradaComponent } from './a-autor-manja-veca-dorada/a-autor-manja-veca-dorada.component';
+import { AKrajOdbijenComponent } from './a-kraj-odbijen/a-kraj-odbijen.component';
+import { AKrajPotvrdjenComponent } from './a-kraj-potvrdjen/a-kraj-potvrdjen.component';
+import { AAUrednikIspComponent } from './a-a-urednik-isp/a-a-urednik-isp.component';
+import { AAAutorNovaIspComponent } from './a-a-autor-nova-isp/a-a-autor-nova-isp.component';
 
 
 const ChildRoutes =
@@ -115,7 +119,11 @@ const Routes = [
     APlacanjeClanarineComponent,
     AKonacnaOdlukaUrednikComponent,
     AVremeIspravkeUrednikComponent,
-    AAutorManjaVecaDoradaComponent
+    AAutorManjaVecaDoradaComponent,
+    AKrajOdbijenComponent,
+    AKrajPotvrdjenComponent,
+    AAUrednikIspComponent,
+    AAAutorNovaIspComponent
 
   ],
   imports: [
