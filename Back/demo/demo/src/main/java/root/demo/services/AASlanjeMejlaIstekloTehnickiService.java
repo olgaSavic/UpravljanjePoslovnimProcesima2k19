@@ -49,7 +49,7 @@ public class AASlanjeMejlaIstekloTehnickiService implements JavaDelegate
 	      
 	      String processInstanceId = execution.getProcessInstanceId();
 	     
-	      //sendNotificaitionAsync(autor, processInstanceId);
+	      sendNotificaitionAsync(autor, processInstanceId);
 	      
 	      
 	}

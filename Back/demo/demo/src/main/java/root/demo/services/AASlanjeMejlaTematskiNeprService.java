@@ -48,7 +48,7 @@ public class AASlanjeMejlaTematskiNeprService implements JavaDelegate{
 	      Korisnik autor = korisnikRepository.findOneByUsername(autorUsername);
 	      String processInstanceId = execution.getProcessInstanceId();
 	     
-	      //sendNotificaitionAsync(autor, processInstanceId);
+	      sendNotificaitionAsync(autor, processInstanceId);
 	      
 	      
 	}

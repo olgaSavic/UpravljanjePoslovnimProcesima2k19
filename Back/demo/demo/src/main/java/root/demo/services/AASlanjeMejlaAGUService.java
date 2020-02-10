@@ -81,11 +81,9 @@ public class AASlanjeMejlaAGUService implements JavaDelegate
 			 System.out.println("Glavni urednik casopisa je [EMAIL]: " + glavniUrednik.getUsername());
 			 System.out.println("Autor je [EMAIL]: " + autor.getUsername());
 			 
-		  
-		  /*
 	      sendNotificaitionAsync(autor, processInstanceId);
 	      sendNotificaitionAsync(glavniUrednik, processInstanceId);
-	      */
+	      
 	      
 	}
 	

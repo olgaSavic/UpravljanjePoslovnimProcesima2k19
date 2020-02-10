@@ -1520,20 +1520,21 @@ public class ObradaTekstaController
 		}
 		
 		@GetMapping(path = "/doradaDalje/{processId}", produces = "application/json")
-		public ResponseEntity<String> doradaDalje(@PathVariable String processId)
+		public ResponseEntity<Boolean> doradaDalje(@PathVariable String processId)
 		{
 			String povratna = "";
+			Boolean povratnaBoolean = true;
 			
 			povratna = (String)  runtimeService.getVariable(processId, "komentarVar");
 			System.out.println("Povratna je: " + povratna);
 			
-			if (povratna != "") {
-				return new ResponseEntity<String>(povratna, HttpStatus.OK);
+			if (povratna != "" && povratna != null) {
+				return new ResponseEntity<Boolean>(povratnaBoolean, HttpStatus.OK);
 			}
 			else
 			{
 				povratna = "kraj";
-				return new ResponseEntity<String>(povratna, HttpStatus.OK);
+				return new ResponseEntity<Boolean>(povratnaBoolean, HttpStatus.OK);
 			}
 			
 		

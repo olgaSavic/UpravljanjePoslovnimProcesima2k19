@@ -87,28 +87,21 @@ export class AKonacnaOdlukaUrednikComponent implements OnInit {
       }
     );
 
-    /*
+
     let nova = this.obradaService.doradaDalje(this.processInstance);
     nova.subscribe(olga => {
 
-      alert("USAO")!
-      alert(olga.povratna);
-      alert(olga);
-      if (olga == "kraj")
+
+      if (olga == false)
       {
         this.router.navigateByUrl('krajPotvrdjen');
 
       }
-      else if (olga == "odbiti")
-      {
-        this.router.navigateByUrl('krajOdbijen');
-      }
+
       else { // manja ili veca dorada
         this.router.navigateByUrl('loginDrugiObrada/' + this.processInstance);
       }
     })
-
-    */
 
   }
 
