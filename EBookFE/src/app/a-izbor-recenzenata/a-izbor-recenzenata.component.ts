@@ -125,15 +125,14 @@ export class AIzborRecenzenataComponent implements OnInit {
         console.log(this.formFields);
         this.formFields.forEach( (field) =>{
 
+
           if( field.type.name=='enum' && field.id == 'recenzentiL'){
             this.enumValues = Object.keys(field.type.values);
             this.reviewers = Object.keys(field.type.values);
-          }
-          else {
+          } else {
             this.enumValues2 = Object.keys(field.type.values);
           }
         });
-        );
       },
       err => {
         console.log('Error occured');

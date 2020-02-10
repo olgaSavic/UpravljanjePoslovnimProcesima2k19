@@ -51,6 +51,8 @@ import { AHomepageComponent } from './a-homepage/a-homepage.component';
 import { APregledPdfGlUrednikComponent } from './a-pregled-pdf-gl-urednik/a-pregled-pdf-gl-urednik.component';
 import { AKrajTematskiNeprihvatljivComponent } from './a-kraj-tematski-neprihvatljiv/a-kraj-tematski-neprihvatljiv.component';
 import { AIzborRecenzenataComponent } from './a-izbor-recenzenata/a-izbor-recenzenata.component';
+import { ARecenziranjeUrednikComponent } from './a-recenziranje-urednik/a-recenziranje-urednik.component';
+import { APlacanjeClanarineComponent } from './a-placanje-clanarine/a-placanje-clanarine.component';
 
 
 const ChildRoutes =
@@ -105,7 +107,9 @@ const Routes = [
     AHomepageComponent,
     APregledPdfGlUrednikComponent,
     AKrajTematskiNeprihvatljivComponent,
-    AIzborRecenzenataComponent
+    AIzborRecenzenataComponent,
+    ARecenziranjeUrednikComponent,
+    APlacanjeClanarineComponent
 
   ],
   imports: [

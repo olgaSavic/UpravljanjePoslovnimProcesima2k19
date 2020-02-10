@@ -22,6 +22,8 @@ export class AIzborCasopisaComponent implements OnInit {
   private processInstance: any ;
   private enumValues = [];
 
+  private dalje: any ;
+
   private casopisi = [];
   // tslint:disable-next-line:max-line-length
   constructor(private route: ActivatedRoute,
@@ -94,7 +96,20 @@ export class AIzborCasopisaComponent implements OnInit {
       res => {
         console.log(res);
         alert('Izvrsen je uspesan izbor casopisa!');
-        this.router.navigateByUrl('unosInfoRad/' + this.processInstance);
+
+        let z = this.obradaService.casopisDalje(this.processInstance) ;
+        z.subscribe(opla => {
+          if (opla == true) // nije openAccess
+          {
+            this.router.navigateByUrl('unosInfoRad/' + this.processInstance);
+          }
+          else
+          {
+            this.router.navigateByUrl('placanjeClanarine/' + this.processInstance);
+
+          }
+        })
+
       },
       err => {
         console.log('Error occured');

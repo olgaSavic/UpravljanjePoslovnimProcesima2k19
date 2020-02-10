@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import {UserService} from '../services/users/user.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {ObradaService} from '../services/obrada/obrada.service';
 import {RepositoryService} from '../services/repository/repository.service';
 import {NaucnaOblastService} from '../services/naucna-oblast/naucna-oblast.service';
-import {ObradaService} from '../services/obrada/obrada.service';
 
 @Component({
-  selector: 'app-a-potvrda-nastavak',
-  templateUrl: './a-potvrda-nastavak.component.html',
-  styleUrls: ['./a-potvrda-nastavak.component.css']
+  selector: 'app-a-placanje-clanarine',
+  templateUrl: './a-placanje-clanarine.component.html',
+  styleUrls: ['./a-placanje-clanarine.component.css']
 })
-export class APotvrdaNastavakComponent implements OnInit {
+export class APlacanjeClanarineComponent implements OnInit {
 
   private formFieldsDto = null;
   private formFields = [];
@@ -30,7 +30,7 @@ export class APotvrdaNastavakComponent implements OnInit {
 
 
     const processInstanceId = this.route.snapshot.params.processInstanceId ;
-    let y = this.obradaService.potvrdaNastavak(processInstanceId);
+    let y = this.obradaService.sledeciTaskClanarina(processInstanceId);
     this.processInstance = processInstanceId;
 
     y.subscribe((
@@ -64,14 +64,13 @@ export class APotvrdaNastavakComponent implements OnInit {
     }
 
     console.log(o);
-    let x = this.obradaService.sacuvajIzborNastavak(o, this.formFieldsDto.taskId);
+    let x = this.obradaService.sacuvajClanarina(o, this.formFieldsDto.taskId);
 
     x.subscribe(
       res => {
         console.log(res);
-
-            this.router.navigateByUrl('izborCasopisa/' + this.processInstance);
-
+        alert('Uspesno ste uplatili clanarinu!');
+        this.router.navigateByUrl('unosInfoRad/' + this.processInstance);
 
       },
       err => {
@@ -79,6 +78,5 @@ export class APotvrdaNastavakComponent implements OnInit {
       }
     );
   }
-
 
 }

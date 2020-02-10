@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import root.demo.model.FormSubmissionWithFileDto;
 import root.demo.model.Casopis;
+import root.demo.model.Clanarina;
 import root.demo.model.FormFieldsDto;
 import root.demo.model.FormSubmissionDto;
 import root.demo.model.FormSubmissonDTO;
@@ -42,6 +43,7 @@ import root.demo.model.Korisnik;
 import root.demo.model.NaucnaOblastCasopis;
 import root.demo.model.TaskDto;
 import root.demo.repository.CasopisRepository;
+import root.demo.repository.ClanarinaRepository;
 import root.demo.repository.KorisnikRepository;
 import root.demo.repository.NaucnaOblastCasopisRepository;
 import root.demo.services.ValidacijaService;
@@ -81,6 +83,9 @@ public class ObradaTekstaController
 	
 	@Autowired
 	NaucnaOblastCasopisRepository noRepository ;
+	
+	@Autowired 
+	ClanarinaRepository clanarinaRepository ;
 	
 	// klik na zapocni proces koje stoji gore
 	@GetMapping(path = "/startObradaProcess", produces = "application/json")
@@ -158,19 +163,8 @@ public class ObradaTekstaController
 		public Korisnik getCurrentUser() {
 			Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 			
-			System.out.println("Principal.toString() je: " + principal.toString());
+			
 			Korisnik k = korisnikRepository.findOneByUsername(principal.toString());
-			if (k != null) 
-			{
-				String kIme = k.getUsername();
-				System.out.println("Username getCurrentUser je: " + kIme);
-			}
-			else 
-			{
-				System.out.println("Korisnik je null!");
-			}
-			
-			
 			return k;
 		}
 		
@@ -195,7 +189,51 @@ public class ObradaTekstaController
 			}
 			return new ResponseEntity<>(HttpStatus.OK);
 	    }
+		
+		// ucitavanje forme gde korisnik potvrdjuje da zeli da nastavi dalje u proces
+				@GetMapping(path = "/sledeciTaskClanarina/{processId}", produces = "application/json")
+			    public @ResponseBody FormFieldsDto sledeciTaskClanarina(@PathVariable String processId) {
 
+					List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+					List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+					
+					if(tasks.size()==0){
+						System.out.println("Prazna lista, nema vise taskova");
+					}
+					for(Task T: tasks)
+					{
+						System.out.println("Dodaje task "+T.getName());
+						taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+					}
+					
+					Task nextTask = tasks.get(0);
+					
+					TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+					List<FormField> properties = tfd.getFormFields();
+					
+			        return new FormFieldsDto(nextTask.getId(), processId, properties);
+			    }		
+				
+				// klik kada izabere casopis, prelazak na servisni task za cuvanje izabranog casopisa
+				@PostMapping(path = "/sacuvajClanarina/{taskId}", produces = "application/json")
+			    public @ResponseBody ResponseEntity sacuvajClanarina(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
+					
+					HashMap<String, Object> map = this.mapListToDto(formData);
+					Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+					String processInstanceId = task.getProcessInstanceId();
+					
+					try{
+						runtimeService.setVariable(processInstanceId, "clanarina", formData);
+						formService.submitTaskForm(taskId, map);
+				     				    
+					}catch(FormFieldValidationException e){
+						return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+					}
+					return new ResponseEntity<>(HttpStatus.OK);
+			    }			
+
+		
+		
 	
 	// ucitavanje forme gde korisnik bira casopis
 	// DINAMICKO UCITAVANJE CASOPISA		
@@ -1226,5 +1264,111 @@ public class ObradaTekstaController
 						
 				        return new FormFieldsDto(nextTask.getId(), processId, properties);
 				    }
+				 
+				 // ucitavanje forme gde urednik pregleda ono uneseno o radu
+				 @GetMapping(path = "/sledeciTaskRecenziranjeUrednik/{processId}", produces = "application/json")
+				    public @ResponseBody FormFieldsDto sledeciTaskRecenziranjeUrednik(@PathVariable String processId) {
+
+						List<Task> tasks = taskService.createTaskQuery().processInstanceId(processId).list();
+						List<TaskDto> taskDTOList = new ArrayList<TaskDto>();
+						
+						if(tasks.size()==0){
+							System.out.println("Prazna lista, nema vise taskova");
+						}
+						for(Task T: tasks)
+						{
+							System.out.println("Dodaje task "+T.getName());
+							taskDTOList.add(new TaskDto(T.getId(), T.getName(), T.getAssignee()));
+						}
+						
+						Task nextTask = tasks.get(0);
+						
+						TaskFormData tfd = formService.getTaskFormData(nextTask.getId());
+						List<FormField> properties = tfd.getFormFields();
+
+				        return new FormFieldsDto(nextTask.getId(), processId, properties);
+				    }
+					
+				 	// urednik nakon sto pregleda rad i klikne na submit
+					@PostMapping(path = "/sacuvajRecenziranjeUrednika/{taskId}", produces = "application/json")
+				    public @ResponseBody ResponseEntity sacuvajRecenziranjeUrednika(@RequestBody List<FormSubmissonDTO> formData, @PathVariable String taskId) {
+						
+						HashMap<String, Object> map = this.mapListToDto(formData);
+						Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
+						String processInstanceId = task.getProcessInstanceId();
+						
+						TaskFormData tfd = formService.getTaskFormData(taskId);
+						List<FormField> formFields = tfd.getFormFields();
+									
+						try{
+							runtimeService.setVariable(processInstanceId, "recenziranjeUrednika", formData);
+							formService.submitTaskForm(taskId, map);
+					     				    
+						}catch(FormFieldValidationException e){
+							return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+						}
+						return new ResponseEntity<>(HttpStatus.OK);
+				    }
+					
+		@GetMapping(path = "/casopisDalje/{processId}", produces = "application/json")
+		public ResponseEntity<Boolean> casopisDalje(@PathVariable String processId)
+		{
+			
+			String povratna = "clanarina";
+			Boolean povratnaBoolean = false ;
+			
+			List<FormSubmissonDTO> izabranCasopisForm = (List<FormSubmissonDTO>)runtimeService.getVariable(processId, "izabranCasopis");
+			
+			 Casopis casopis = new Casopis();
+			 
+			 for(FormSubmissonDTO item: izabranCasopisForm)
+			  {
+				  String fieldId=item.getFieldId();
+				  
+				 if(fieldId.equals("casopisiL")){
+					  
+					  List<Casopis> allCasopisi = casopisRepository.findAll();
+					  for(Casopis c : allCasopisi){
+						  for(String selectedEd:item.getCategories())
+						  {
+							  String idS= c.getId().toString();
+							  
+							  if(idS.equals(selectedEd)){
+								  System.out.println(c.getNaziv());
+								  casopis = casopisRepository.findOneByIssn(c.getIssn());
+								  System.out.println("Naziv izabranog casopisa je: " + casopis.getNaziv());
+								  break ;
+								  
+							  }
+						  }
+					  }
+				 }
+				 
+				}
+			 
+			 Korisnik k = new Korisnik();
+			 k = getCurrentUser();
+			 
+			 if (casopis.isOpenAccess() == false)
+			 {
+				 povratnaBoolean = true ;
+				 return new ResponseEntity<Boolean>(povratnaBoolean, HttpStatus.OK) ;
+			 }
+			 
+			 List<Clanarina> sveClanarine = clanarinaRepository.findAll();
+			 for (Clanarina cl: sveClanarine)
+				{
+					if (cl.getKorisnik().getId().equals(k.getId()) && cl.getCasopis().getId().equals(casopis.getId())) 
+					// pronasao sam da je korisnik platio clanarinu za dati casopis
+					{
+						povratna = "infoRad";
+						povratnaBoolean = true ;
+					}
+				}
+			 return new ResponseEntity<Boolean>(povratnaBoolean, HttpStatus.OK) ;
+			 
+	
+		}
+				 
 
 }

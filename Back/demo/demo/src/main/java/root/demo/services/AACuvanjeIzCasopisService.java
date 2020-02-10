@@ -47,7 +47,7 @@ public class AACuvanjeIzCasopisService implements JavaDelegate{
 				 Casopis casopis = new Casopis();
 				 
 				 // postavim procesnu varijablu na osnovu casopisa, da li je open-access ili nije, zbog if-a
-				 execution.setVariable("openAccessVar", casopis.isOpenAccess());
+				 
 				 
 				 // postavljam da je izabran casopis taj koji je korisnik kliknuo 
 				 // u jednom momentu sme biti samo jedan izabran casopis
@@ -77,6 +77,7 @@ public class AACuvanjeIzCasopisService implements JavaDelegate{
 					 
 					}				 
 				 casopis.setIzabranCasopis(true);
+				 execution.setVariable("openAccessVar", casopis.isOpenAccess());
 				 casopisRepository.save(casopis);
 		
 	}

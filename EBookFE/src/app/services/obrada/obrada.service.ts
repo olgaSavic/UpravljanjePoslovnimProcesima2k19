@@ -86,6 +86,7 @@ export class ObradaService {
   completeTask(processId: string, task) {
     console.log(task.name);
     console.log(task.taskId);
+    alert(task.name);
     if (task.name === 'Obrada rada') // ukoliko se nalazi na urednikovom tasku obrada rada
     {
       window.location.href = 'pregledRadaUrednik/' + processId + '/' + task.taskId;
@@ -94,9 +95,17 @@ export class ObradaService {
     {
       window.location.href = 'izborRecenzenata/' +  processId + '/' + task.taskId;
     }
-    else { // ukoliko se nalazi na autorovom tasku
+    else if (task.name === 'Recenziranje glavni urednik') // ukoliko nema dovoljno recenzenata, recenziranje obavlja glavni urednik
+    {
+      window.location.href = 'recenziranjeGlUrednik/' +  processId + '/' + task.taskId;
+    }
+    else if (task.name === 'Ispravka rada - Autor')
+      { // ukoliko se nalazi na autorovom tasku
       window.location.href = 'izmenaRadaAutor/' + processId + '/' + task.taskId;
 
+    }
+    else { // nema vise taskova
+      window.location.href = 'krajTematskiNeprihvatljiv';
     }
   }
 
@@ -156,6 +165,28 @@ export class ObradaService {
     return this.httpClient.get('http://localhost:8080/obrada/trenutniKorisnik')as Observable<any>;
   }
 
+  // ---------------------------------------------------
+  sledeciTaskRecenziranjeUrednik(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskRecenziranjeUrednik/'.concat(processId)) as Observable<any>;
+  }
 
+  sacuvajRecenziranjeUrednika(rad, taskId) {
+    console.log(rad);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajRecenziranjeUrednika/'.concat(taskId), rad) as Observable<any>;
+  }
+
+  // ----------------------------------------------
+  sledeciTaskClanarina(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/sledeciTaskClanarina/'.concat(processId)) as Observable<any>;
+  }
+
+  sacuvajClanarina(casopis, taskId) {
+    console.log(casopis);
+    return this.httpClient.post('http://localhost:8080/obrada/sacuvajClanarina/'.concat(taskId), casopis) as Observable<any>;
+  }
+
+  casopisDalje(processId: string) {
+    return this.httpClient.get('http://localhost:8080/obrada/casopisDalje/'.concat(processId)) as Observable<any>;
+  }
 
 }

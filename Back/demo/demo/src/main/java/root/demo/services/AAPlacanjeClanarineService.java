@@ -23,7 +23,7 @@ import root.demo.repository.ClanarinaRepository;
 import root.demo.repository.KorisnikRepository;
 
 @Service
-public class AAProveraClanarineService implements JavaDelegate{
+public class AAPlacanjeClanarineService implements JavaDelegate{
 	@Autowired
 	IdentityService identityService;
 	
@@ -36,34 +36,16 @@ public class AAProveraClanarineService implements JavaDelegate{
 	@Autowired
 	CasopisRepository casopisRepository ;
 
-
 	@Override
-	public void execute(DelegateExecution execution) throws Exception 
-	{
+	public void execute(DelegateExecution execution) throws Exception {
 		// TODO Auto-generated method stub
-		
 		Korisnik k = new Korisnik();
 		k = getCurrentUser();
 		
-		if (k == null) // niko nije ulogovan
-		{
-			execution.setVariable("placenaClanarinaVar", false);
-		}
-		
-		List<Clanarina> sveClanarine = clanarinaRepository.findAll();
-		
-		if (sveClanarine.size() == 0) // ne postoji nijedna clanarina
-		{
-			execution.setVariable("placenaClanarinaVar", false);
-			System.out.println("Postavljena je placenaClanarinaVar na false, jer nema clanarina!");
-
-		}
-		
-		execution.setVariable("placenaClanarinaVar", false);
 		List<FormSubmissonDTO> izabranCasopis = (List<FormSubmissonDTO>)execution.getVariable("izabranCasopis");
 		
 		 Casopis casopis = new Casopis();
-
+		 
 		 for(FormSubmissonDTO item: izabranCasopis)
 		  {
 			  String fieldId=item.getFieldId();
@@ -85,19 +67,14 @@ public class AAProveraClanarineService implements JavaDelegate{
 				  }
 			 }
 			 
-			}	// nasla sam sacuvan casopis			 
-		
-		
-		for (Clanarina cl: sveClanarine)
-		{
-			if (cl.getKorisnik().getId().equals(k.getId()) && cl.getCasopis().getId().equals(casopis.getId())) 
-			// pronasao sam da je korisnik platio clanarinu za dati casopis
-			{
-				execution.setVariable("placenaClanarinaVar", true);
-				System.out.println("Postavljena je placenaClanarinaVar na true, jer je nasao da je placena!");
-				break ;
-			}
-		}
+			}	// nasla sam sacuvan casopis
+		 
+		 Clanarina clanarina = new Clanarina();
+		 clanarina.setAktivna(true);
+		 clanarina.setCasopis(casopis);
+		 clanarina.setKorisnik(k);
+		 clanarinaRepository.save(clanarina);
+		 System.out.println("Uspesno sam postavio clanarinu!");
 		
 	}
 	
@@ -119,7 +96,7 @@ public class AAProveraClanarineService implements JavaDelegate{
 				
 				
 				return k;
-	}	
+	}
 
 
 }
